@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Fake Info Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    
+    <div class="container">
+        <h1><i class="fas fa-user-secret"></i> Fake Info Generator</h1>
+        
+        <div class="options">
+            <div class="option-group">
+                <label for="country"><i class="fas fa-globe-americas"></i> Country:</label>
+                <select id="country" class="glass-input">
+                    <option value="USA">USA</option>
+                    <option value="UK">UK</option>
+                    <option value="Canada">Canada</option>
+                    <option value="Australia">Australia</option>
+                    <option value="France">France</option>
+                    <option value="Germany">Germany</option>
+                    <option value="Japan">Japan</option>
+                    <option value="India">India</option>
+                    <option value="Bangladesh">Bangladesh</option>
+                </select>
+            </div>
+            
+            <div class="option-group">
+                <label for="gender"><i class="fas fa-venus-mars"></i> Gender:</label>
+                <select id="gender" class="glass-input">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+        </div>
+        
+        <button id="generate-btn"><i class="fas fa-random"></i> Generate User Info</button>
+        
+        <div class="user-info">
+            <div class="info-card glass">
+                <div class="info-item">
+                    <span class="label"><i class="fas fa-user"></i> Full Name:</span>
+                    <span id="full-name" class="info-value">-</span>
+                    <button class="copy-btn" data-target="full-name" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                
+                <div class="info-item">
+                    <span class="label"><i class="fas fa-phone"></i> Phone Number:</span>
+                    <span id="phone-number" class="info-value">-</span>
+                    <button class="copy-btn" data-target="phone-number" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                
+                <div class="info-item">
+                    <span class="label"><i class="fas fa-key"></i> Password:</span>
+                    <span id="password" class="info-value">-</span>
+                    <button class="copy-btn" data-target="password" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <footer class="footer">
+                <style>
+                    p{
+                        margin: 0;
+                        padding: 0;
+                        text-align: center;
+                    }
+                </style>
+                <br>
+                <p>&copy; MD.SABBIR SHEIKH</p>
+            </footer>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

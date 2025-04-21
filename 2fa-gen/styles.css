@@ -1,0 +1,392 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    background-attachment: fixed;
+    color: #e2e2e2;
+    line-height: 1.6;
+    min-height: 100vh;
+    position: relative;
+}
+
+a {
+    text-decoration: none;
+    color: #4cc9f0;
+}
+
+/* Header Styles */
+header {
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px 0;
+    text-align: center;
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.logo h2 {
+    color: #333;
+    font-size: 1.5rem;
+}
+
+/* Main Content Styles */
+main {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    width: 100%;
+    padding: 30px;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+h1 {
+    color: #fff;
+    font-size: 28px;
+    margin-bottom: 24px;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.instruction {
+    font-size: 16px;
+    color: #e2e2e2;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.note {
+    font-size: 14px;
+    color: #a0a0a0;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.input-container {
+    margin-bottom: 24px;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.input-container:focus-within {
+    border-color: rgba(76, 201, 240, 0.5);
+    box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.25);
+}
+
+#secretInput {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+#secretInput::placeholder {
+    color: #64748b;
+}
+
+#getCodeBtn {
+    background: linear-gradient(45deg, #4cc9f0, #4361ee);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 30px;
+    display: block;
+    width: 100%;
+    transition: transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+#getCodeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(76, 201, 240, 0.25);
+}
+
+#getCodeBtn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(76, 201, 240, 0.15);
+}
+
+/* Table Styles */
+.result-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.result-table th {
+    background: rgba(17, 24, 39, 0.8);
+    color: #fff;
+    text-align: left;
+    padding: 16px 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.result-table th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.result-table th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.result-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(30, 41, 59, 0.5);
+}
+
+.result-table tr:last-child td {
+    border-bottom: none;
+}
+
+.result-table tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.result-table tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+#codeOutput {
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 1px;
+    color: #4cc9f0;
+    background: rgba(17, 24, 39, 0.7);
+}
+
+#secretOutput {
+    word-break: break-all;
+    font-family: monospace;
+    letter-spacing: 1px;
+    color: #a5b4fc;
+}
+
+/* How to Use Section */
+.how-to-use {
+    margin-top: 40px;
+    padding: 20px 0;
+}
+
+.how-to-use h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.how-to-use hr {
+    border: none;
+    height: 1px;
+    background-color: #ddd;
+    margin-bottom: 15px;
+}
+
+/* Blog Section */
+.blog-section {
+    margin-top: 30px;
+}
+
+.blog-section h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.blog-posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.blog-post {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.blog-post h5 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.blog-post p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #ddd;
+    padding: 30px 0;
+    margin-top: 40px;
+    text-align: center;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+footer p {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        border-radius: 12px;
+    }
+    
+    h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+    
+    .instruction {
+        font-size: 15px;
+    }
+    
+    .note {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+    
+    .result-table th,
+    .result-table td {
+        padding: 12px 15px;
+    }
+    
+    #codeOutput {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 16px;
+        border-radius: 10px;
+    }
+    
+    h1 {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+    
+    #secretInput {
+        padding: 12px 14px;
+        font-size: 15px;
+    }
+    
+    #getCodeBtn {
+        padding: 12px 16px;
+        font-size: 15px;
+    }
+    
+    .result-table th {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+    
+    .result-table td {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    #codeOutput {
+        font-size: 16px;
+    }
+    
+    #secretOutput {
+        font-size: 13px;
+    }
+}
+
+/* Handle very small screens */
+@media (max-width: 360px) {
+    .container {
+        padding: 12px;
+    }
+    
+    h1 {
+        font-size: 18px;
+    }
+    
+    .result-table th,
+    .result-table td {
+        padding: 8px 10px;
+    }
+    
+    #codeOutput {
+        font-size: 15px;
+    }
+}
+
+/* Ensure touch targets are large enough on mobile */
+@media (hover: none) and (pointer: coarse) {
+    #getCodeBtn {
+        padding: 16px 24px;
+        min-height: 50px;
+    }
+    
+    #secretInput {
+        min-height: 48px;
+    }
+} 
+
+.copyright {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+hr{
+    border: none;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.08);
+}

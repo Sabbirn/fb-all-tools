@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>2FA Authentication Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <main>
+        <div class="container">
+            <h1>2FA Authentication</h1>
+            <hr>
+            <br>
+            <p class="instruction">Enter your 2FA secret key below</p>
+            <p class="note">* Please store your 2FA secret safely</p>
+            
+            <div class="input-container">
+                <input type="text" id="secretInput" placeholder="Enter your 2FA secret">
+            </div>
+            
+            <button id="getCodeBtn">Generate Code</button>
+            
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>CODE</th>
+                        <th>SECRET KEY</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="codeOutput">-</td>
+                        <td id="secretOutput">-</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+                <p class="copyright">&copy; MD.SABBIR SHEIKH</p>
+        </div>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

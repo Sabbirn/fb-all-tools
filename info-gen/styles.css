@@ -1,0 +1,563 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #6c5ce7;
+    --accent-color: #a29bfe;
+    --text-color: #e2e2e2;
+    --card-bg: rgba(30, 30, 40, 0.7);
+    --main-bg: #121212;
+    --input-bg: rgba(40, 40, 50, 0.5);
+    --border-color: rgba(110, 110, 130, 0.2);
+    --highlight: rgba(108, 92, 231, 0.2);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #121212 0%, #2d3436 100%);
+    background-attachment: fixed;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background shapes */
+.background-shapes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.3;
+}
+
+.shape-1 {
+    background: var(--primary-color);
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    right: -100px;
+    animation: float 20s infinite alternate;
+}
+
+.shape-2 {
+    background: #9b59b6;
+    width: 200px;
+    height: 200px;
+    bottom: -70px;
+    left: -70px;
+    animation: float 15s infinite alternate-reverse;
+}
+
+.shape-3 {
+    background: #3498db;
+    width: 250px;
+    height: 250px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 10s infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(20px, 20px);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.2;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.3;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.2;
+    }
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    z-index: 1;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+h1 i {
+    font-size: 0.9em;
+}
+
+.options {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.option-group {
+    width: 48%;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+label i {
+    color: var(--accent-color);
+    font-size: 0.9em;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 16px;
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a29bfe' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+}
+
+.glass-input {
+    background: rgba(40, 40, 50, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+#generate-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#generate-btn:hover {
+    background-color: #5a49e8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+}
+
+.user-info {
+    margin-top: 1rem;
+}
+
+.info-card {
+    background-color: var(--input-bg);
+    border-radius: 15px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.info-card:hover {
+    box-shadow: 0 0 20px rgba(108, 92, 231, 0.2);
+    transform: translateY(-3px);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    position: relative;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px dashed rgba(110, 110, 130, 0.2);
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.label {
+    font-weight: 600;
+    min-width: 150px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.label i {
+    font-size: 0.9em;
+    width: 20px;
+    text-align: center;
+}
+
+.info-value {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.copy-btn {
+    margin-left: auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(108, 92, 231, 0.2);
+    color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+.copy-btn i {
+    font-size: 16px;
+}
+
+/* Animation for copy success */
+.copy-success {
+    animation: pulse 0.5s;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Glass effect for elements */
+.glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animation for info card generation */
+.pulse-animation {
+    animation: card-pulse 0.5s ease;
+}
+
+@keyframes card-pulse {
+    0% {
+        transform: scale(0.98);
+        box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4);
+    }
+    70% {
+        transform: scale(1.01);
+        box-shadow: 0 0 0 10px rgba(108, 92, 231, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(108, 92, 231, 0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 1.5rem;
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+    }
+    
+    .options {
+        flex-direction: column;
+    }
+    
+    .option-group {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .label {
+        min-width: 120px;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    /* Adjust background shapes for mobile */
+    .shape-1 {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .shape-2 {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .shape-3 {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .container {
+        padding: 1.2rem;
+    }
+    
+    h1 {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .label {
+        min-width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .info-value {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        word-break: break-all;
+    }
+    
+    .copy-btn {
+        width: 44px;
+        height: 44px;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    
+    select, #generate-btn {
+        padding: 14px 12px;
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+    
+    /* Add tap highlight color for mobile */
+    :root {
+        -webkit-tap-highlight-color: rgba(108, 92, 231, 0.2);
+    }
+    
+    /* Improve scrolling experience */
+    .container {
+        padding: 1.2rem;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Handle landscape orientation on mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    body {
+        align-items: flex-start;
+        padding: 1rem 0;
+    }
+    
+    .container {
+        margin: 0.5rem;
+        max-height: calc(100vh - 1rem);
+        overflow-y: auto;
+    }
+    
+    h1 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .options {
+        margin-bottom: 1rem;
+    }
+    
+    #generate-btn {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Active states for touch devices */
+@media (hover: none) {
+    .copy-btn:active, #generate-btn:active {
+        transform: scale(0.95);
+        opacity: 0.9;
+    }
+    
+    .info-card:active {
+        transform: translateY(-1px);
+    }
+    
+    /* Provide visual feedback on touch */
+    select:active {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+    }
+}
+
+/* Add feedback animation for button presses */
+.button-pressed {
+    animation: button-press 0.2s ease;
+}
+
+@keyframes button-press {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Success animation with haptic feel */
+.copy-success {
+    animation: success-pulse 0.5s ease;
+}
+
+@keyframes success-pulse {
+    0% {
+        transform: scale(1);
+        background-color: rgba(108, 92, 231, 0.2);
+    }
+    30% {
+        transform: scale(1.1);
+        background-color: rgba(39, 174, 96, 0.3);
+    }
+    100% {
+        transform: scale(1);
+        background-color: rgba(108, 92, 231, 0.2);
+    }
+}
+
+/* Error animation with haptic feel */
+.copy-error {
+    animation: error-pulse 0.5s ease;
+}
+
+@keyframes error-pulse {
+    0% {
+        transform: scale(1);
+        background-color: rgba(108, 92, 231, 0.2);
+    }
+    30% {
+        transform: scale(1.1);
+        background-color: rgba(231, 76, 60, 0.3);
+    }
+    100% {
+        transform: scale(1);
+        background-color: rgba(108, 92, 231, 0.2);
+    }
+}
+
+/* Loading indication for generate button */
+.generate-loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.generate-loading:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        transparent
+    );
+    animation: loading-shine 1.5s infinite;
+}
+
+@keyframes loading-shine {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+} 
