@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Signal Filter</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'JetBrains Mono', monospace, monospace;
+    background: #121212;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  h1 {
+    color: #0ef;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px #0ef;
+  }
+
+  textarea {
+    width: 100%;
+    max-width: 900px;
+    height: 220px;
+    background: #1e1e1e;
+    border: 1px solid #0ef;
+    border-radius: 12px;
+    padding: 15px;
+    color: #eee;
+    font-size: 16px;
+    resize: vertical;
+    box-shadow: 0 0 15px #0ef33a44 inset;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    outline: none;
+
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+    overflow-x: auto;
+
+    /* Custom Scrollbar for Webkit */
+    scrollbar-width: thin;
+    scrollbar-color: #0ef #111;
+  }
+  textarea:focus {
+    border-color: #0ff;
+    box-shadow: 0 0 25px #0ff inset;
+  }
+
+  /* Webkit scrollbar */
+  textarea::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  textarea::-webkit-scrollbar-track {
+    background: #111;
+    border-radius: 12px;
+  }
+  textarea::-webkit-scrollbar-thumb {
+    background: #0ef;
+    border-radius: 12px;
+    transition: background-color 0.3s;
+  }
+  textarea::-webkit-scrollbar-thumb:hover {
+    background: #0ff;
+  }
+
+  button {
+    margin: 15px 10px 0;
+    background: #0ef;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 28px;
+    color: #111;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 0 15px #0ef;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    user-select: none;
+  }
+  button:hover {
+    background: #0ff;
+    box-shadow: 0 0 25px #0ff;
+    transform: scale(1.05);
+  }
+  button:active {
+    transform: scale(0.95);
+  }
+
+  h2 {
+    margin: 30px 0 15px;
+    color: #0ef;
+    text-shadow: 0 0 8px #0ef;
+  }
+
+  pre {
+    max-width: 900px;
+    width: 100%;
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 20px;
+    color: #aaffaa;
+    font-size: 15px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    box-shadow: 0 0 20px #0ef22a88;
+    min-height: 180px;
+    opacity: 0;
+    animation: fadeIn 0.7s forwards;
+    user-select: text;
+    overflow-x: auto;
+
+    /* Custom Scrollbar for Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #0ef #111;
+  }
+
+  /* Webkit scrollbar for pre */
+  pre::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+  }
+  pre::-webkit-scrollbar-track {
+    background: #111;
+    border-radius: 12px;
+  }
+  pre::-webkit-scrollbar-thumb {
+    background: #0ef;
+    border-radius: 12px;
+    transition: background-color 0.3s;
+  }
+  pre::-webkit-scrollbar-thumb:hover {
+    background: #0ff;
+  }
+
+  /* fadeIn animation */
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    textarea {
+      height: 160px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      font-size: 14px;
+    }
+    pre {
+      font-size: 13px;
+      min-height: 140px;
+    }
+  }
+  .cr{
+    color: #0ef;
+    text-shadow: 0 0 8px #0ef;
+  }
+</style>
+</head>
+<body>
+
+<h1>Signal Filter</h1>
+<textarea id="input" placeholder="Paste your signals here..."></textarea>
+<button onclick="processSignals()">Process Signals</button>
+
+<h2>Processed Output</h2>
+<pre id="output"></pre>
+<button id="copyBtn" onclick="copyOutput()" style="display:none;">Copy Result</button>
+<br>
+  <p class="cr">&copy; Md.Sabbir Sheikh</p>
+
+<script>
+function processSignals() {
+  let raw = document.getElementById('input').value.trim().split(/\n+/);
+  if (!raw.length) {
+    document.getElementById('output').textContent = '';
+    document.getElementById('copyBtn').style.display = 'none';
+    return;
+  }
+
+  // Prompt 1: Arrange in time sequence
+  raw.sort((a,b)=>{
+    let ta = a.match(/\b(\d{1,2}:\d{2})\b/);
+    let tb = b.match(/\b(\d{1,2}:\d{2})\b/);
+    return ta && tb ? ta[1].localeCompare(tb[1]) : 0;
+  });
+
+  // Prompt 2: Keep only one per exact time
+  let seen = {};
+  let step2 = [];
+  raw.forEach(line => {
+    let t = line.match(/\b(\d{1,2}:\d{2})\b/);
+    if (t && !seen[t[1]]) {
+      seen[t[1]] = true;
+      step2.push(line);
+    }
+  });
+
+  // Prompt 3: Remove back-to-back and add random gaps
+  let final = [];
+  let lastTime = null;
+  step2.forEach(line => {
+    let t = line.match(/\b(\d{1,2}):(\d{2})\b/);
+    if (t) {
+      let h = parseInt(t[1], 10);
+      let m = parseInt(t[2], 10);
+      if (lastTime !== null) {
+        let diff = (h*60 + m) - lastTime;
+        if (diff <= 1) {
+          return; // skip back-to-back
+        }
+      }
+      lastTime = h*60 + m + Math.floor(Math.random() * 3); // random gap 0-2 min
+      final.push(line);
+    }
+  });
+
+  let outputEl = document.getElementById('output');
+  outputEl.textContent = final.join("\n");
+  outputEl.style.animation = 'none'; // reset animation
+  void outputEl.offsetWidth; // trigger reflow
+  outputEl.style.animation = null; // reapply fadeIn
+
+  document.getElementById('copyBtn').style.display = final.length ? 'inline-block' : 'none';
+}
+
+function copyOutput() {
+  const outputEl = document.getElementById('output');
+  if (!outputEl.textContent.trim()) return;
+  navigator.clipboard.writeText(outputEl.textContent).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = 'Copy Result', 2000);
+  });
+}
+</script>
+
+</body>
+</html>
