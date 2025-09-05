@@ -162,10 +162,10 @@ function renderOrders(orders){
         <p><strong>Price:</strong> ৳${o.price}</p>
         <p><strong>Date:</strong> ${new Date(o.date).toLocaleDateString()}</p>
       </div>
-      // <div class="actions">
-      //   <button class="edit-btn" onclick="openEditModal('${o.id}','${o.customer}','${o.product}','${o.quantity}','${o.price}','${o.image || ''}')">Edit</button>
-      //   <button class="delete-btn" onclick="openDeleteModal('${o.id}')">Delete</button>
-      // </div>`;
+       <div class="actions">
+         <button class="edit-btn" onclick="openEditModal('${o.id}','${o.customer}','${o.product}','${o.quantity}','${o.price}','${o.image || ''}')">Edit</button>
+        <button class="delete-btn" onclick="openDeleteModal('${o.id}')">Delete</button>
+       </div>`;
     orderContainer.appendChild(card);
   });
 }
@@ -242,6 +242,7 @@ fetchOrders();
 </script>
 </body>
 </html>
+
 
 
 
