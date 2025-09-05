@@ -64,7 +64,7 @@ label { position:absolute; left:12px; top:14px; pointer-events:none; transition:
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- Add Modal -->
-<!-- <div class="modal" id="addModal">
+<div class="modal" id="addModal">
   <div class="modal-content">
     <span class="modal-close" id="addClose">&times;</span>
     <h2>Add Order</h2>
@@ -75,10 +75,10 @@ label { position:absolute; left:12px; top:14px; pointer-events:none; transition:
     <div class="form-group"><input type="file" id="modalImageFile" accept="image/*" required></div>
     <button id="addOrderBtn">Add Order</button>
   </div>
-</div> -->
+</div>
 
 <!-- Edit Modal -->
-<!-- <div class="modal" id="editModal">
+<div class="modal" id="editModal">
   <div class="modal-content">
     <span class="modal-close" id="editClose">&times;</span>
     <h2>Edit Order</h2>
@@ -89,17 +89,17 @@ label { position:absolute; left:12px; top:14px; pointer-events:none; transition:
     <div class="form-group"><input type="file" id="editImageFile" accept="image/*"></div>
     <button id="saveEditBtn">Save Changes</button>
   </div>
-</div> -->
+</div>
 
 <!-- Delete Modal -->
-<!-- <div class="modal" id="deleteModal">
+<div class="modal" id="deleteModal">
   <div class="modal-content">
     <span class="modal-close" id="deleteClose">&times;</span>
     <h2>Delete Order</h2>
     <p>Are you sure you want to delete this order?</p>
     <button id="confirmDeleteBtn" class="delete-btn">Delete</button>
   </div>
-</div> -->
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-app.js";
@@ -242,5 +242,6 @@ fetchOrders();
 </script>
 </body>
 </html>
+
 
 
