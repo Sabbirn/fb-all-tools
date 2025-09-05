@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Management</title>
+<title>Order Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
@@ -53,7 +53,7 @@ label { position:absolute; left:12px; top:14px; pointer-events:none; transition:
 <body>
 
 <div class="container">
-<h1>Management</h1>
+<h1>📦 Order Management</h1>
 <button class="main-btn" id="openAddBtn">➕ Add Order</button>
 <div class="form-group" style="margin-top:20px;">
   <input type="text" id="searchInput" placeholder="🔍 Search orders by customer or product">
@@ -162,15 +162,15 @@ function renderOrders(orders){
         <p><strong>Price:</strong> ৳${o.price}</p>
         <p><strong>Date:</strong> ${new Date(o.date).toLocaleDateString()}</p>
       </div>
-       <div class="actions">
-         <button class="edit-btn" onclick="openEditModal('${o.id}','${o.customer}','${o.product}','${o.quantity}','${o.price}','${o.image || ''}')">Edit</button>
+      <div class="actions">
+        <button class="edit-btn" onclick="openEditModal('${o.id}','${o.customer}','${o.product}','${o.quantity}','${o.price}','${o.image || ''}')">Edit</button>
         <button class="delete-btn" onclick="openDeleteModal('${o.id}')">Delete</button>
-       </div>`;
+      </div>`;
     orderContainer.appendChild(card);
   });
 }
 
-// // Add Order
+// Add Order
 document.getElementById('addOrderBtn').onclick=async()=>{
   const btn=document.getElementById('addOrderBtn');
   btn.disabled=true;
@@ -194,7 +194,7 @@ document.getElementById('addOrderBtn').onclick=async()=>{
   finally{ btn.disabled=false; btn.textContent=originalText; }
 }
 
-// // Edit/Delete
+// Edit/Delete
 window.openEditModal=(id,cust,prod,qty,price,image)=>{
   currentEditId=id;
   document.getElementById('editCustomer').value=cust;
@@ -242,8 +242,3 @@ fetchOrders();
 </script>
 </body>
 </html>
-
-
-
-
-
