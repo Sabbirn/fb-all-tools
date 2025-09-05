@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Order Management</title>
+<title>Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
@@ -53,8 +53,8 @@ label { position:absolute; left:12px; top:14px; pointer-events:none; transition:
 <body>
 
 <div class="container">
-<h1>📦 Order Management</h1>
-<button class="main-btn" id="openAddBtn">➕ Add Order</button>
+<h1>Management</h1>
+<!-- <button class="main-btn" id="openAddBtn">➕ Add Order</button> -->
 <div class="form-group" style="margin-top:20px;">
   <input type="text" id="searchInput" placeholder="🔍 Search orders by customer or product">
 </div>
@@ -64,7 +64,7 @@ label { position:absolute; left:12px; top:14px; pointer-events:none; transition:
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- Add Modal -->
-<div class="modal" id="addModal">
+<!-- <div class="modal" id="addModal">
   <div class="modal-content">
     <span class="modal-close" id="addClose">&times;</span>
     <h2>Add Order</h2>
@@ -75,10 +75,10 @@ label { position:absolute; left:12px; top:14px; pointer-events:none; transition:
     <div class="form-group"><input type="file" id="modalImageFile" accept="image/*" required></div>
     <button id="addOrderBtn">Add Order</button>
   </div>
-</div>
+</div> -->
 
 <!-- Edit Modal -->
-<div class="modal" id="editModal">
+<!-- <div class="modal" id="editModal">
   <div class="modal-content">
     <span class="modal-close" id="editClose">&times;</span>
     <h2>Edit Order</h2>
@@ -89,17 +89,17 @@ label { position:absolute; left:12px; top:14px; pointer-events:none; transition:
     <div class="form-group"><input type="file" id="editImageFile" accept="image/*"></div>
     <button id="saveEditBtn">Save Changes</button>
   </div>
-</div>
+</div> -->
 
 <!-- Delete Modal -->
-<div class="modal" id="deleteModal">
+<!-- <div class="modal" id="deleteModal">
   <div class="modal-content">
     <span class="modal-close" id="deleteClose">&times;</span>
     <h2>Delete Order</h2>
     <p>Are you sure you want to delete this order?</p>
     <button id="confirmDeleteBtn" class="delete-btn">Delete</button>
   </div>
-</div>
+</div> -->
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-app.js";
@@ -162,74 +162,74 @@ function renderOrders(orders){
         <p><strong>Price:</strong> ৳${o.price}</p>
         <p><strong>Date:</strong> ${new Date(o.date).toLocaleDateString()}</p>
       </div>
-      <div class="actions">
-        <button class="edit-btn" onclick="openEditModal('${o.id}','${o.customer}','${o.product}','${o.quantity}','${o.price}','${o.image || ''}')">Edit</button>
-        <button class="delete-btn" onclick="openDeleteModal('${o.id}')">Delete</button>
-      </div>`;
+      // <div class="actions">
+      //   <button class="edit-btn" onclick="openEditModal('${o.id}','${o.customer}','${o.product}','${o.quantity}','${o.price}','${o.image || ''}')">Edit</button>
+      //   <button class="delete-btn" onclick="openDeleteModal('${o.id}')">Delete</button>
+      // </div>`;
     orderContainer.appendChild(card);
   });
 }
 
-// Add Order
-document.getElementById('addOrderBtn').onclick=async()=>{
-  const btn=document.getElementById('addOrderBtn');
-  btn.disabled=true;
-  const originalText=btn.textContent;
-  btn.textContent="Adding...";
+// // Add Order
+// document.getElementById('addOrderBtn').onclick=async()=>{
+//   const btn=document.getElementById('addOrderBtn');
+//   btn.disabled=true;
+//   const originalText=btn.textContent;
+//   btn.textContent="Adding...";
 
-  try{
-    const customer=document.getElementById('modalCustomer').value;
-    const product=document.getElementById('modalProduct').value;
-    const quantity=parseInt(document.getElementById('modalQuantity').value);
-    const price=parseFloat(document.getElementById('modalPrice').value);
-    const file=document.getElementById('modalImageFile').files[0];
-    if(!file){ showToast("❌ Please select an image","error"); btn.disabled=false; btn.textContent=originalText; return; }
-    const image=await fileToBase64(file);
-    const date=new Date().toISOString();
-    await addDoc(collection(db,'orders'),{customer,product,quantity,price,image,date});
-    showToast("✅ Order added","success");
-    addModal.classList.remove('active');
-    fetchOrders();
-  }catch(err){ showToast("❌ "+err.message,"error"); }
-  finally{ btn.disabled=false; btn.textContent=originalText; }
-}
+//   try{
+//     const customer=document.getElementById('modalCustomer').value;
+//     const product=document.getElementById('modalProduct').value;
+//     const quantity=parseInt(document.getElementById('modalQuantity').value);
+//     const price=parseFloat(document.getElementById('modalPrice').value);
+//     const file=document.getElementById('modalImageFile').files[0];
+//     if(!file){ showToast("❌ Please select an image","error"); btn.disabled=false; btn.textContent=originalText; return; }
+//     const image=await fileToBase64(file);
+//     const date=new Date().toISOString();
+//     await addDoc(collection(db,'orders'),{customer,product,quantity,price,image,date});
+//     showToast("✅ Order added","success");
+//     addModal.classList.remove('active');
+//     fetchOrders();
+//   }catch(err){ showToast("❌ "+err.message,"error"); }
+//   finally{ btn.disabled=false; btn.textContent=originalText; }
+// }
 
-// Edit/Delete
-window.openEditModal=(id,cust,prod,qty,price,image)=>{
-  currentEditId=id;
-  document.getElementById('editCustomer').value=cust;
-  document.getElementById('editProduct').value=prod;
-  document.getElementById('editQuantity').value=qty;
-  document.getElementById('editPrice').value=price;
-  currentEditImage=image;
-  editModal.classList.add('active');
-}
+// // Edit/Delete
+// window.openEditModal=(id,cust,prod,qty,price,image)=>{
+//   currentEditId=id;
+//   document.getElementById('editCustomer').value=cust;
+//   document.getElementById('editProduct').value=prod;
+//   document.getElementById('editQuantity').value=qty;
+//   document.getElementById('editPrice').value=price;
+//   currentEditImage=image;
+//   editModal.classList.add('active');
+// }
 
-document.getElementById('saveEditBtn').onclick=async()=>{
-  const btn=document.getElementById('saveEditBtn');
-  btn.disabled=true;
-  const originalText=btn.textContent;
-  btn.textContent="Saving...";
-  try{
-    const customer=document.getElementById('editCustomer').value;
-    const product=document.getElementById('editProduct').value;
-    const quantity=parseInt(document.getElementById('editQuantity').value);
-    const price=parseFloat(document.getElementById('editPrice').value);
-    let image=currentEditImage;
-    const file=document.getElementById('editImageFile').files[0];
-    if(file){ image=await fileToBase64(file); }
-    await updateDoc(doc(db,'orders',currentEditId),{customer,product,quantity,price,image});
-    showToast("✏️ Order updated","info");
-    editModal.classList.remove('active');
-    fetchOrders();
-  }catch(err){ showToast("❌ "+err.message,"error"); }
-  finally{ btn.disabled=false; btn.textContent=originalText; }
-}
+// document.getElementById('saveEditBtn').onclick=async()=>{
+//   const btn=document.getElementById('saveEditBtn');
+//   btn.disabled=true;
+//   const originalText=btn.textContent;
+//   btn.textContent="Saving...";
+//   try{
+//     const customer=document.getElementById('editCustomer').value;
+//     const product=document.getElementById('editProduct').value;
+//     const quantity=parseInt(document.getElementById('editQuantity').value);
+//     const price=parseFloat(document.getElementById('editPrice').value);
+//     let image=currentEditImage;
+//     const file=document.getElementById('editImageFile').files[0];
+//     if(file){ image=await fileToBase64(file); }
+//     await updateDoc(doc(db,'orders',currentEditId),{customer,product,quantity,price,image});
+//     showToast("✏️ Order updated","info");
+//     editModal.classList.remove('active');
+//     fetchOrders();
+//   }catch(err){ showToast("❌ "+err.message,"error"); }
+//   finally{ btn.disabled=false; btn.textContent=originalText; }
+// }
 
-window.openDeleteModal=(id)=>{ currentDeleteId=id; deleteModal.classList.add('active'); }
-document.getElementById('confirmDeleteBtn').onclick=async()=>{
-  try{ await deleteDoc(doc(db,'orders',currentDeleteId)); showToast("🗑️ Deleted","error"); deleteModal.classList.remove('active'); fetchOrders(); }catch(err){ showToast("❌ "+err.message,"error"); }
-}
+// window.openDeleteModal=(id)=>{ currentDeleteId=id; deleteModal.classList.add('active'); }
+// document.getElementById('confirmDeleteBtn').onclick=async()=>{
+//   try{ await deleteDoc(doc(db,'orders',currentDeleteId)); showToast("🗑️ Deleted","error"); deleteModal.classList.remove('active'); fetchOrders(); }catch(err){ showToast("❌ "+err.message,"error"); }
+// }
 
 // Realtime Search
 document.getElementById('searchInput').addEventListener('input',(e)=>{
@@ -242,3 +242,4 @@ fetchOrders();
 </script>
 </body>
 </html>
+
