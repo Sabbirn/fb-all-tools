@@ -1,204 +1,86 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S Signal Generator</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a modern typeface -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
-        /* Basic Reset */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* General body styling */
+        /* Custom styles to complement Tailwind */
         body {
-            background-color: #ffffff;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Container styling */
-        .container {
-            text-align: center;
-            background: linear-gradient(145deg, #ffffff, #ffffff);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0px 8px 15px ffffff(0, 0, 0, 0.3);
-            width: 350px;
-            animation: fadeIn 1.5s ease;
+        /* Custom styling for the dropdown arrow */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position-x: 98%;
+            background-position-y: 50%;
         }
-
-        /* Logo styling */
-        .logo {
-            width: 80px;
-            height: 80px;
-            background-color: #ffd700;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            position: relative;
-        }
-
-        /* Logo inner styling */
-        .logo::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 40px;
-            height: 40px;
-            background: #ffffff;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* Title styling */
-        .title {
-            font-size: 28px;
-            font-weight: 900;
-            margin-bottom: 5px;
-            color: #ff0000;
-            font-family: 'Arial Black', sans-serif;
-            text-transform: uppercase;
-        }
-
-        /* Telegram handle styling */
-        .telegram-handle {
-            font-size: 14px;
-            color: #0a0000;
-            margin-bottom: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        /* Asset dropdown styling */
-        .dropdown {
-            background: #ffffff;
-            color: #ff00dd;
-            padding: 12px;
-            border-radius: 5px;
-            width: 100%;
-            font-size: 18px;
-            font-weight: 700;
-            margin: 10px 0;
-            outline: none;
-            cursor: pointer;
-            transition: background 0.3s;
-            font-family: 'Arial Black', sans-serif;
-        }
-
-        /* Time display styling */
-        .time {
-            background: #ffffff;
-            padding: 12px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-size: 18px;
-            font-weight: 700;
-            color: #0a0000;
-            font-family: 'Arial Black', sans-serif;
-        }
-
-        /* Generate button styling */
-        #generateBtn {
-            background-color: #ffd700;
-            color: #ffffff;
-            font-size: 20px;
-            font-weight: 900;
-            padding: 15px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
-            margin-top: 15px;
-            font-family: 'Arial Black', sans-serif;
-            text-transform: uppercase;
-        }
-
-        #generateBtn:hover {
-            background-color: #ffa500;
-            transform: scale(1.05);
-        }
-
-        /* Signal message styling (white color, medium size) */
-        .message {
-            margin-top: 20px;
-            font-size: 18px; /* Medium size */
-            font-weight: 700;
-            color: #0a0000; /* White color */
-            font-family: 'Arial', sans-serif;
-            text-align: left;
-        }
-
-        /* Cooldown message styling */
-        .cooldown {
-            font-size: 18px;
-            color: #fa0808;
-            font-weight: 700;
-            margin-top: 5px;
-            font-family: 'Arial Black', sans-serif;
-        }
-
-        /* Telegram button styling (yellow color) */
-        #telegramBtn {
-            background-color: #ff0000; /* Yellow color */
-            color: #ffffff;
-            font-size: 14px; /* Smaller font size */
-            font-weight: 700;
-            padding: 8px 12px; /* Reduced padding */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
-            margin-top: 10px;
-            font-family: 'Arial Black', sans-serif;
-            text-transform: uppercase;
-        }
-
-        #telegramBtn:hover {
-            background-color: #ff0000;
-            transform: scale(1.05);
-        }
-
-        /* Keyframe animation */
-        @keyframes fadeIn {
+        
+        /* Animation for newly generated signals */
+        @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
+
+        .signal-item {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        /* Specific colors for signal types */
+        .signal-call {
+            color: #22c55e; /* green-500 */
+        }
+
+        .signal-put {
+            color: #ef4444; /* red-500 */
+        }
     </style>
 </head>
-<body>
+<body class="bg-gray-900 flex justify-center items-center min-h-screen p-4">
 
-<div class="container">
-    <div class="logo"></div>
-    <div class="title">S Signal</div>
-    <div class="title">Generator</div>
+<div class="w-full max-w-sm mx-auto text-center bg-gray-800 p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-700">
+    <!-- Modern SVG Logo -->
+    <div class="mx-auto mb-4 w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+    </div>
     
-    <!-- Telegram handle -->
-    <div class="telegram-handle">Avoid after a Doji | Avoid after a big Candle | Avoid On Opposite Trend | Try to take safety Margin | Avoid Gap up/Dwon | Always MTG 1</div>
+    <h1 class="text-3xl font-black text-white uppercase tracking-wider">S Signal</h1>
+    <h2 class="text-3xl font-black text-indigo-400 uppercase tracking-wider mb-3">Generator</h2>
+    
+    <!-- Guidelines Text -->
+    <div class="text-xs text-gray-400 mb-6 leading-relaxed bg-gray-900/50 p-3 rounded-lg border border-gray-700">
+        Avoid: Doji, Big Candle, Opposite Trend, Gap Up/Down. Use Safety Margin & MTG 1.
+    </div>
 
     <!-- Dropdown for asset selection -->
-    <select id="assetDropdown" class="dropdown">
+    <select id="assetDropdown" class="w-full bg-gray-700 text-white p-3 rounded-lg text-base font-semibold border-2 border-gray-600 focus:border-indigo-500 focus:ring-0 outline-none transition duration-200 cursor-pointer">
         <option value="EUR/USD (OTC)">EUR/USD (OTC)</option>
         <option value="EUR/JPY (OTC)">EUR/JPY (OTC)</option>
         <option value="EUR/NZD (OTC)">EUR/NZD (OTC)</option>
         <option value="EUR/AUD (OTC)">EUR/AUD (OTC)</option>
         <option value="EUR/CHF (OTC)">EUR/CHF(OTC)</option>
         <option value="GBP/USD (OTC)">GBP/USD (OTC)</option>
-        
-        
         <option value="AUD/CAD (OTC)">AUD/CAD (OTC)</option>
         <option value="AUD/USD (OTC)">AUD/USD (OTC)</option>
         <option value="CAD/JPY (OTC)">CAD/JPY (OTC)</option>
@@ -208,40 +90,74 @@
         <option value="USD/JPY (OTC)">USD/JPY (OTC)</option>
         <option value="USD/BDT (OTC)">USD/BDT (OTC)</option>
         <option value="USD/ARS (OTC)">USD/ARS (OTC)</option>
-
         <option value="Crypto IDX">Crypto IDX</option>
     </select>
 
-    <div class="time">1 MIN</div>
-    <button id="generateBtn" onclick="generateSignal()">GET SIGNAL</button>
-    <div class="message" id="signalMessage"></div>
-    <div class="cooldown" id="cooldownMessage"></div>
+    <!-- Time Display -->
+    <div class="time w-full bg-gray-700 text-gray-300 p-3 rounded-lg text-base font-semibold my-4 border-2 border-gray-600">
+        1 MINUTE EXPIRY
+    </div>
+
+    <!-- Generate Button -->
+    <button id="generateBtn" onclick="generateSignal()" class="w-full bg-indigo-600 text-white text-lg font-bold py-3 px-6 rounded-lg hover:bg-indigo-700 active:scale-95 transition-all duration-300 shadow-lg shadow-indigo-600/30">
+        GET SIGNAL
+    </button>
+    
+    <!-- Cooldown Message -->
+    <div class="cooldown text-yellow-400 text-sm font-semibold h-6 mt-3" id="cooldownMessage"></div>
+
+    <!-- Signal Message Area -->
+    <div class="message mt-4 text-lg font-bold text-left space-y-2" id="signalMessage">
+        <!-- Signals will be appended here -->
+    </div>
 
     <!-- Telegram Button -->
-    <button id="telegramBtn" onclick="openTelegram()">Contact</button>
+    <button id="telegramBtn" onclick="openTelegram()" class="w-full mt-6 bg-gray-700 text-gray-300 text-sm font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300">
+        Contact Developer
+    </button>
 </div>
 
 <script>
     let cooldown = false;
 
     function generateSignal() {
+        const generateBtn = document.getElementById('generateBtn');
+        const cooldownMessage = document.getElementById('cooldownMessage');
+
         if (cooldown) {
-            document.getElementById('cooldownMessage').textContent = "Please wait for 2 minutes...";
+            cooldownMessage.textContent = "Please wait for the cooldown...";
+            // Add a shake animation for feedback
+            generateBtn.classList.add('animate-bounce');
+            setTimeout(() => generateBtn.classList.remove('animate-bounce'), 500);
             return;
         }
 
-        // Clear cooldown message if it was previously set
-        document.getElementById('cooldownMessage').textContent = "";
+        // Clear previous cooldown message
+        cooldownMessage.textContent = "";
 
-        // Set cooldown for 2 minutes
+        // Set cooldown and update button state
         cooldown = true;
-        setTimeout(() => {
-            cooldown = false;
-            document.getElementById('cooldownMessage').textContent = "";
-        }, 2 * 60 * 1000); // 2 minutes cooldown
+        generateBtn.disabled = true;
+        generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        
+        let countdown = 120; // 2 minutes in seconds
+        cooldownMessage.textContent = `Cooldown: 2m 00s`;
+        const interval = setInterval(() => {
+            countdown--;
+            const minutes = Math.floor(countdown / 60);
+            const seconds = countdown % 60;
+            cooldownMessage.textContent = `Cooldown: ${minutes}m ${seconds.toString().padStart(2, '0')}s`;
+            if (countdown <= 0) {
+                clearInterval(interval);
+                cooldown = false;
+                cooldownMessage.textContent = "";
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }, 1000);
 
         // Get selected asset from dropdown
-        const asset = document.getElementById('assetDropdown').value.replace(" ", "").replace("/", "").replace("(", "").replace(")", "");
+        const asset = document.getElementById('assetDropdown').value;
 
         // Generate random signal (CALL or PUT)
         const signals = ["CALL", "PUT"];
@@ -253,11 +169,22 @@
         const formattedTime = nextMinute.getHours().toString().padStart(2, '0') + ':' +
                               nextMinute.getMinutes().toString().padStart(2, '0');
 
-        // Display signal message in the new format
-        const signalMessage = document.getElementById('signalMessage');
+        // Display signal message with new styling
+        const signalMessageContainer = document.getElementById('signalMessage');
         const newMessage = document.createElement('div');
-        newMessage.textContent = `${asset} ${formattedTime} ${randomSignal}`;
-        signalMessage.appendChild(newMessage);
+        
+        const signalClass = randomSignal === "CALL" ? 'signal-call' : 'signal-put';
+        
+        // Use Tailwind classes for layout and add custom classes for animation and color
+        newMessage.className = 'signal-item flex justify-between items-center bg-gray-900/60 p-3 rounded-md';
+        newMessage.innerHTML = `
+            <span class="text-white">${asset}</span>
+            <span class="text-gray-400">${formattedTime}</span>
+            <span class="${signalClass} font-black tracking-wider">${randomSignal}</span>
+        `;
+        
+        // Prepend the new signal to the top of the list
+        signalMessageContainer.prepend(newMessage);
     }
 
     function openTelegram() {
@@ -267,3 +194,4 @@
 
 </body>
 </html>
+
