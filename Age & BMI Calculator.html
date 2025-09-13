@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age & BMI Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* Use a cooler, lighter gray for the background */
+        }
+        .main-card {
+            background: white;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease;
+        }
+        .tab-button {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        /* The animated underline for the active tab */
+        .tab-button::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 1.5px;
+            background-color: #4f46e5;
+            transform: scaleX(0);
+            transition: transform 0.3s ease-out;
+            transform-origin: center;
+        }
+        .tab-active {
+            color: #4f46e5;
+        }
+        .tab-active::after {
+            transform: scaleX(1);
+        }
+        .calculator-content {
+            /* Animation for content fade-in */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Custom focus ring color */
+        .form-input:focus {
+            --tw-ring-color: rgba(79, 70, 229, 0.5);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-2xl mx-auto rounded-2xl main-card p-6 md:p-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800">Age & BMI Calculator</h1>
+            <p class="text-slate-500 mt-2">Modern tools for a healthier you.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex border-b border-slate-200 mb-8">
+            <button id="ageTab" class="flex-1 py-3 px-4 font-semibold text-slate-500 hover:text-indigo-600 flex items-center justify-center gap-2 tab-button tab-active" onclick="switchTab('age')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" /></svg>
+                Age Calculator
+            </button>
+            <button id="bmiTab" class="flex-1 py-3 px-4 font-semibold text-slate-500 hover:text-indigo-600 flex items-center justify-center gap-2 tab-button" onclick="switchTab('bmi')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a1 1 0 000 2c5.523 0 10 4.477 10 10a1 1 0 102 0C17 7.373 11.627 2 5 2a1 1 0 00-2 0a1 1 0 102 0a8 8 0 11-8 8a1 1 0 100 2c5.523 0 10-4.477 10-10a1 1 0 10-2 0C7.239 13.362 5.862 14.739 5 15a1 1 0 100-2c.437.12.86.273 1.268.455A8.003 8.003 0 015 3z" /></svg>
+                BMI Calculator
+            </button>
+        </div>
+        
+        <!-- Content Area -->
+        <div id="content-container">
+            <!-- Age Calculator Content -->
+            <div id="ageContent" class="calculator-content">
+                <div class="space-y-6">
+                    <div>
+                        <label for="dob" class="block text-sm font-medium text-slate-700 mb-2">Your Date of Birth</label>
+                        <input type="date" id="dob" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 form-input transition">
+                    </div>
+                    <button onclick="calculateAge()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
+                        Calculate Age
+                    </button>
+                    <div id="ageResult" class="text-center p-6 bg-slate-50 rounded-lg min-h-[120px] flex items-center justify-center transition-all duration-300">
+                        <p class="text-slate-500">Your age will appear here.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BMI Calculator Content -->
+            <div id="bmiContent" class="hidden">
+                 <!-- The content will be injected by JS to allow animation on tab switch -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentTab = 'age';
+        let currentUnit = 'metric';
+
+        function switchTab(tab) {
+            if (tab === currentTab) return;
+            currentTab = tab;
+            
+            const ageTab = document.getElementById('ageTab');
+            const bmiTab = document.getElementById('bmiTab');
+            const contentContainer = document.getElementById('content-container');
+            
+            ageTab.classList.toggle('tab-active', tab === 'age');
+            bmiTab.classList.toggle('tab-active', tab === 'bmi');
+
+            if (tab === 'age') {
+                contentContainer.innerHTML = ageCalculatorHTML();
+            } else {
+                contentContainer.innerHTML = bmiCalculatorHTML();
+                // Re-attach listeners for the newly added content
+                document.getElementById('metricBtn').onclick = () => switchUnit('metric');
+                document.getElementById('imperialBtn').onclick = () => switchUnit('imperial');
+                document.getElementById('calculateBmiBtn').onclick = calculateBmi;
+
+                // Add new listeners for real-time height conversion
+                document.getElementById('heightFtMetric').addEventListener('input', convertFtToCmMetric);
+                document.getElementById('heightInMetric').addEventListener('input', convertFtToCmMetric);
+                document.getElementById('heightFt').addEventListener('input', convertFtToCm);
+                document.getElementById('heightIn').addEventListener('input', convertFtToCm);
+
+                // Restore previous unit selection
+                switchUnit(currentUnit);
+            }
+        }
+        
+        function switchUnit(unit) {
+            currentUnit = unit;
+            const metricBtn = document.getElementById('metricBtn');
+            const imperialBtn = document.getElementById('imperialBtn');
+            const metricInputs = document.getElementById('metricInputs');
+            const imperialInputs = document.getElementById('imperialInputs');
+            
+            if (!metricBtn) return; 
+
+            if (unit === 'metric') {
+                metricBtn.classList.add('bg-indigo-600', 'text-white');
+                metricBtn.classList.remove('text-slate-600', 'hover:bg-slate-200');
+                imperialBtn.classList.remove('bg-indigo-600', 'text-white');
+                imperialBtn.classList.add('text-slate-600', 'hover:bg-slate-200');
+                metricInputs.classList.remove('hidden');
+                imperialInputs.classList.add('hidden');
+            } else {
+                imperialBtn.classList.add('bg-indigo-600', 'text-white');
+                imperialBtn.classList.remove('text-slate-600', 'hover:bg-slate-200');
+                metricBtn.classList.remove('bg-indigo-600', 'text-white');
+                metricBtn.classList.add('text-slate-600', 'hover:bg-slate-200');
+                imperialInputs.classList.remove('hidden');
+                metricInputs.classList.add('hidden');
+            }
+        }
+        
+        // --- AGE CALCULATOR ---
+        function calculateAge() {
+            const dobString = document.getElementById('dob').value;
+            const resultDiv = document.getElementById('ageResult');
+
+            if (!dobString) {
+                resultDiv.innerHTML = `<p class="text-red-500 font-medium">Please select your date of birth.</p>`;
+                return;
+            }
+
+            const dob = new Date(dobString);
+            const today = new Date();
+
+            if (dob > today) {
+                resultDiv.innerHTML = `<p class="text-red-500 font-medium">Date of birth cannot be in the future.</p>`;
+                return;
+            }
+
+            let years = today.getFullYear() - dob.getFullYear();
+            let months = today.getMonth() - dob.getMonth();
+            let days = today.getDate() - dob.getDate();
+
+            if (days < 0) {
+                months--;
+                const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="w-full text-center calculator-content">
+                    <p class="text-slate-600">You are</p>
+                    <div class="flex flex-wrap justify-center items-baseline gap-x-4 gap-y-2 mt-2">
+                        <div><span class="text-4xl md:text-5xl font-extrabold text-indigo-600">${years}</span><span class="ml-2 font-medium text-slate-500">years</span></div>
+                        <div><span class="text-4xl md:text-5xl font-extrabold text-indigo-600">${months}</span><span class="ml-2 font-medium text-slate-500">months</span></div>
+                        <div><span class="text-4xl md:text-5xl font-extrabold text-indigo-600">${days}</span><span class="ml-2 font-medium text-slate-500">days old</span></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- BMI CALCULATOR ---
+        function calculateBmi() {
+            let weight = 0;
+            let height = 0; // in meters
+
+            if (currentUnit === 'metric') {
+                weight = parseFloat(document.getElementById('weightKg').value);
+                const heightFt = parseFloat(document.getElementById('heightFtMetric').value) || 0;
+                const heightIn = parseFloat(document.getElementById('heightInMetric').value) || 0;
+                if (heightFt || heightIn) {
+                    const totalInches = (heightFt * 12) + heightIn;
+                    height = totalInches * 0.0254;
+                }
+            } else {
+                const weightLbs = parseFloat(document.getElementById('weightLbs').value);
+                const heightFt = parseFloat(document.getElementById('heightFt').value) || 0;
+                const heightIn = parseFloat(document.getElementById('heightIn').value) || 0;
+                if (weightLbs) weight = weightLbs * 0.453592;
+                if (heightFt || heightIn) {
+                    const totalInches = (heightFt * 12) + heightIn;
+                    height = totalInches * 0.0254;
+                }
+            }
+            
+            const resultDiv = document.getElementById('bmiResult');
+            if (!weight || !height || weight <= 0 || height <= 0) {
+                resultDiv.innerHTML = `<div class="text-center p-4 bg-red-100 text-red-700 rounded-lg"><p>Please enter valid weight and height.</p></div>`;
+                return;
+            }
+            
+            const bmi = weight / (height * height);
+            const bmiData = getBmiData(bmi);
+            
+            resultDiv.innerHTML = `
+                <div class="p-6 rounded-lg bg-slate-50 space-y-4 calculator-content">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium text-slate-600">Your BMI Result</span>
+                        <span class="text-sm font-bold px-3 py-1 rounded-full ${bmiData.badgeBg} ${bmiData.badgeText}">${bmiData.condition}</span>
+                    </div>
+                    <p class="text-5xl font-extrabold text-slate-800">${bmi.toFixed(1)}</p>
+                    <div class="w-full bg-slate-200 rounded-full h-2.5">
+                        <div class="${bmiData.meterColor} h-2.5 rounded-full transition-all duration-500" style="width: ${bmiData.meterPercent}%"></div>
+                    </div>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-lg calculator-content" style="animation-delay: 100ms;">
+                    <h3 class="font-bold text-lg mb-3 text-slate-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                        General Health Tips
+                    </h3>
+                    <ul class="space-y-2 text-slate-600">
+                       ${bmiData.tips.map(tip => `<li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg><span>${tip}</span></li>`).join('')}
+                    </ul>
+                </div>
+                <div class="p-6 bg-indigo-50 border border-indigo-200 rounded-lg calculator-content" style="animation-delay: 200ms;">
+                    <h3 class="font-bold text-lg mb-3 text-indigo-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                        Your Recommended Next Steps
+                    </h3>
+                    <ul class="space-y-3 text-slate-700">
+                       ${bmiData.nextSteps.map(step => `<li class="flex items-start gap-3"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" /></svg><span>${step}</span></li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+        
+        function getBmiData(bmi) {
+            if (bmi < 18.5) {
+                return {
+                    condition: 'Underweight',
+                    badgeBg: 'bg-blue-100', badgeText: 'text-blue-800', meterColor: 'bg-blue-500', meterPercent: 15,
+                    tips: [ 'Eat more frequent, smaller meals.', 'Focus on nutrient-dense foods.', 'Avoid drinking water before meals.' ],
+                    nextSteps: [ '<strong>Consult a Professional:</strong> Schedule an appointment with a doctor or dietitian to create a safe plan.', '<strong>Create a Nutrition Plan:</strong> Focus on increasing calorie intake with nutrient-dense foods gradually.', '<strong>Begin Strength Training:</strong> Start a beginner-friendly resistance program 2-3 times a week to build muscle.' ]
+                };
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                return {
+                    condition: 'Normal',
+                    badgeBg: 'bg-green-100', badgeText: 'text-green-800', meterColor: 'bg-green-500', meterPercent: 40,
+                    tips: [ 'Continue to maintain a balanced diet.', 'Stay consistent with regular physical activity.', 'Prioritize quality sleep and stress management.' ],
+                    nextSteps: [ '<strong>Focus on Maintenance:</strong> Continue your current healthy habits to maintain your weight.', '<strong>Explore New Activities:</strong> Challenge your body by trying a new sport or fitness class.', '<strong>Set Wellness Goals:</strong> Think beyond weight. Set goals for sleep quality, stress, or hydration.' ]
+                };
+            } else if (bmi >= 25 && bmi < 29.9) {
+                 return {
+                    condition: 'Overweight',
+                    badgeBg: 'bg-yellow-100', badgeText: 'text-yellow-800', meterColor: 'bg-yellow-500', meterPercent: 65,
+                    tips: [ 'Practice portion control and mindful eating.', 'Increase physical activity, mixing cardio and strength.', 'Limit processed foods and sugary beverages.' ],
+                    nextSteps: [ '<strong>Set a Realistic Goal:</strong> Aim to lose 5-10% of your body weight over the next 3-6 months.', '<strong>Create a Calorie Deficit:</strong> Track your food intake to create a moderate daily deficit of 250-500 calories.', '<strong>Increase Daily Activity:</strong> Aim for 30+ minutes of moderate exercise most days of the week.' ]
+                };
+            } else { // bmi >= 30
+                 return {
+                    condition: 'Obesity',
+                    badgeBg: 'bg-red-100', badgeText: 'text-red-800', meterColor: 'bg-red-500', meterPercent: 90,
+                    tips: [ 'Adopt a whole-foods diet.', 'Begin with low-impact exercises like walking or swimming.', 'Ensure you are getting adequate, quality sleep.' ],
+                    nextSteps: [ '<strong>Seek Medical Guidance:</strong> Consult your doctor to create a comprehensive, supervised health plan.', '<strong>Develop a Structured Plan:</strong> Work with a dietitian and trainer for a safe diet and exercise regimen.', '<strong>Join a Support System:</strong> Consider a weight management program or support group for accountability.' ]
+                };
+            }
+        }
+
+        // --- REAL-TIME CONVERSION ---
+        function convertFtToCmMetric() {
+            const display = document.getElementById('ftToCmDisplayMetric');
+            const feet = parseFloat(document.getElementById('heightFtMetric').value) || 0;
+            const inches = parseFloat(document.getElementById('heightInMetric').value) || 0;
+            if (!display || (feet <= 0 && inches <= 0)) {
+                if(display) display.textContent = '';
+                return;
+            }
+            const totalInches = (feet * 12) + inches;
+            const cm = totalInches * 2.54;
+            display.textContent = `≈ ${cm.toFixed(1)} cm`;
+        }
+
+        function convertFtToCm() {
+            const display = document.getElementById('ftToCmDisplay');
+            const feet = parseFloat(document.getElementById('heightFt').value) || 0;
+            const inches = parseFloat(document.getElementById('heightIn').value) || 0;
+            if (!display || (feet <= 0 && inches <= 0)) {
+                if(display) display.textContent = '';
+                return;
+            }
+            const totalInches = (feet * 12) + inches;
+            const cm = totalInches * 2.54;
+            display.textContent = `≈ ${cm.toFixed(1)} cm`;
+        }
+        
+        // --- HTML TEMPLATES ---
+        function ageCalculatorHTML() {
+            return `
+            <div id="ageContent" class="calculator-content">
+                <div class="space-y-6">
+                    <div>
+                        <label for="dob" class="block text-sm font-medium text-slate-700 mb-2">Your Date of Birth</label>
+                        <input type="date" id="dob" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 form-input transition">
+                    </div>
+                    <button onclick="calculateAge()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
+                        Calculate Age
+                    </button>
+                    <div id="ageResult" class="text-center p-6 bg-slate-50 rounded-lg min-h-[120px] flex items-center justify-center transition-all duration-300">
+                        <p class="text-slate-500">Your age will appear here.</p>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function bmiCalculatorHTML() {
+            return `
+            <div id="bmiContent" class="calculator-content">
+                <div class="space-y-6">
+                    <div class="flex justify-center bg-slate-100 p-1 rounded-lg">
+                         <button id="metricBtn" class="w-1/2 p-2 rounded-md text-sm font-medium transition-colors">Metric (kg, ft)</button>
+                         <button id="imperialBtn" class="w-1/2 p-2 rounded-md text-sm font-medium transition-colors">Imperial (lbs, in)</button>
+                    </div>
+
+                    <div id="metricInputs" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="weightKg" class="block text-sm font-medium text-slate-700 mb-1">Weight (kg)</label>
+                            <input type="number" id="weightKg" placeholder="70" class="w-full p-3 border border-slate-300 rounded-lg form-input transition">
+                        </div>
+                        <div>
+                            <div class="grid grid-cols-2 gap-2">
+                                 <div>
+                                    <label for="heightFtMetric" class="block text-sm font-medium text-slate-700 mb-1">Height (ft)</label>
+                                    <input type="number" id="heightFtMetric" placeholder="5" class="w-full p-3 border border-slate-300 rounded-lg form-input transition">
+                                </div>
+                                <div>
+                                    <label for="heightInMetric" class="block text-sm font-medium text-slate-700 mb-1">(in)</label>
+                                    <input type="number" id="heightInMetric" placeholder="9" class="w-full p-3 border border-slate-300 rounded-lg form-input transition">
+                                </div>
+                            </div>
+                            <p id="ftToCmDisplayMetric" class="text-xs text-slate-500 mt-1 h-4"></p>
+                        </div>
+                    </div>
+
+                    <div id="imperialInputs" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="weightLbs" class="block text-sm font-medium text-slate-700 mb-1">Weight (lbs)</label>
+                            <input type="number" id="weightLbs" placeholder="154" class="w-full p-3 border border-slate-300 rounded-lg form-input transition">
+                        </div>
+                        <div>
+                            <div class="grid grid-cols-2 gap-2">
+                                 <div>
+                                    <label for="heightFt" class="block text-sm font-medium text-slate-700 mb-1">Height (ft)</label>
+                                    <input type="number" id="heightFt" placeholder="5" class="w-full p-3 border border-slate-300 rounded-lg form-input transition">
+                                </div>
+                                <div>
+                                    <label for="heightIn" class="block text-sm font-medium text-slate-700 mb-1">(in)</label>
+                                    <input type="number" id="heightIn" placeholder="9" class="w-full p-3 border border-slate-300 rounded-lg form-input transition">
+                                </div>
+                            </div>
+                            <p id="ftToCmDisplay" class="text-xs text-slate-500 mt-1 h-4"></p>
+                        </div>
+                    </div>
+                    
+                    <button id="calculateBmiBtn" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl">
+                        Calculate BMI
+                    </button>
+                    
+                    <div id="bmiResult" class="space-y-4 min-h-[100px]"></div>
+                </div>
+            </div>`;
+        }
+    </script>
+</body>
+</html>
+
