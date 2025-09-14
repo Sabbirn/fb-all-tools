@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy English Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5; /* A modern, soft background color */
+        }
+        
+        /* Keyframe animations for view transitions */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .view-enter {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Keyframe animations for hero section */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fadeInDown {
+            animation: fadeInDown 0.8s ease-out forwards;
+        }
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <div class="flex">
+        <main class="flex-1 pt-16 p-4 md:p-8">
+            <div class="container mx-auto max-w-4xl">
+                <div id="preview-view">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 animate-fadeInDown" style="animation-delay: 0.2s;">Easy English Learning</h2>
+                        <p class="text-lg text-slate-500 animate-fadeInUp" style="animation-delay: 0.4s;">Select a topic to begin your step-by-step learning journey.</p>
+                    </div>
+                    <div id="topic-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        </div>
+                </div>
+
+                <div id="lesson-view" class="hidden">
+                    <div id="lesson-content-display">
+                        </div>
+                    <div class="mt-8 flex justify-between items-center">
+                        <button id="prev-btn" class="px-5 py-2.5 bg-white border border-slate-300 text-slate-800 rounded-lg font-semibold text-sm hover:bg-slate-100 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            Previous
+                        </button>
+                        <button id="back-to-topics-btn" class="text-sm font-semibold text-indigo-600 hover:underline">Home</button>
+                        <button id="next-btn" class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg font-semibold text-sm hover:bg-indigo-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        let currentLessonIndex = -1; // -1 indicates the preview page
+
+        const lessons = [
+            { id: 'topic-1', title: 'I want / I have', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I want... / I have...</h3>
+                <p class="mb-5 text-slate-500">Sentence Structure to express desire or possession.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-xl font-medium text-slate-900 mb-2">I want = আমি কিছু চাই</p>
+                        <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                            <li><span class="font-semibold text-slate-800">I want a pen.</span> - আমি একটা কলম চাই</li>
+                            <li><span class="font-semibold text-slate-800">I want a new T-shirt.</span> - আমি একটা নতুন টি-শার্ট চাই</li>
+                            <li><span class="font-semibold text-slate-800">I want money.</span> - আমি টাকা চাই</li>
+                             <li><span class="font-semibold text-slate-800">I want peace.</span> - আমি শান্তি চাই</li>
+                        </ul>
+                    </div>
+                     <div>
+                        <p class="text-xl font-medium text-slate-900 mb-2">I have = আমার কিছু আছে</p>
+                        <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                             <li><span class="font-semibold text-slate-800">I have a book.</span> - আমার একটি বই আছে</li>
+                             <li><span class="font-semibold text-slate-800">I have a business.</span> - আমার একটি ব্যবসা আছে</li>
+                             <li><span class="font-semibold text-slate-800">I have many friends.</span> - আমার অনেক বন্ধু আছে</li>
+                        </ul>
+                    </div>
+                </div>
+            `},
+            { id: 'topic-2', title: 'I am / I am a...', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I am / I am a...</h3>
+                <p class="mb-5 text-slate-500">Describing yourself or your state of being.</p>
+                <div class="space-y-5">
+                    <div>
+                        <p class="text-xl font-medium text-slate-900 mb-2">আমি হলাম কিছু একটা (অবস্থা বর্ণনা)</p>
+                        <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                            <li><span class="font-semibold text-slate-800">I am happy.</span> - আমি সুখী</li>
+                            <li><span class="font-semibold text-slate-800">I am sad.</span> - আমি দুঃখিত</li>
+                            <li><span class="font-semibold text-slate-800">I am healthy.</span> - আমি সুস্থ</li>
+                            <li><span class="font-semibold text-slate-800">I am sick.</span> - আমি অসুস্থ</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="text-xl font-medium text-slate-900 mb-2">আমি একজন (পেশা/পরিচয়)</p>
+                         <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                            <li><span class="font-semibold text-slate-800">I am a teacher.</span> - আমি একজন শিক্ষক</li>
+                            <li><span class="font-semibold text-slate-800">I am a doctor.</span> - আমি একজন ডাক্তার</li>
+                            <li><span class="font-semibold text-slate-800">I am a student.</span> - আমি একজন ছাত্র</li>
+                        </ul>
+                    </div>
+                    <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                        <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                        <p class="mt-2 text-indigo-700">I am Rafiq. I am 40 years old. I am a doctor. I am successful. I am rich. I am happy. I am busy now.</p>
+                    </div>
+                </div>
+            `},
+            { id: 'topic-3', title: 'I was / I will be', content: `
+                 <h3 class="text-2xl font-semibold mb-4 text-slate-800">I was / I will be</h3>
+                <p class="mb-5 text-slate-500">Describing past and future states of being.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <p class="text-xl font-medium text-slate-900">I was (আমি অতীতে কিছু ছিলাম)</p>
+                        <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                            <li><span class="font-semibold text-slate-800">I was happy.</span> - আমি সুখী ছিলাম</li>
+                            <li><span class="font-semibold text-slate-800">I was a teacher.</span> - আমি একজন শিক্ষক ছিলাম</li>
+                            <li><span class="font-semibold text-slate-800">I was a student.</span> - আমি একজন ছাত্র ছিলাম</li>
+                        </ul>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-xl font-medium text-slate-900">I will be (আমি ভবিষ্যতে কিছু হবো)</p>
+                         <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                            <li><span class="font-semibold text-slate-800">I will be happy.</span> - আমি সুখী হবো</li>
+                            <li><span class="font-semibold text-slate-800">I will be a doctor.</span> - আমি একজন ডাক্তার হবো</li>
+                            <li><span class="font-semibold text-slate-800">I will be a singer.</span> - আমি একজন গায়ক হবো</li>
+                        </ul>
+                    </div>
+                </div>
+                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Revision Example:</p>
+                    <p class="mt-2 text-indigo-700">I am Ahnaf. I am a manager at ABC company. I was a student at 123 University. I will be a businessman next year.</p>
+                </div>
+            `},
+            { id: 'topic-4', title: 'I [verb] (simple form)', content: `
+                 <h3 class="text-2xl font-semibold mb-4 text-slate-800">I [verb] (simple form)</h3>
+                <p class="mb-5 text-slate-500">Talking about habitual actions.</p>
+                <p class="text-xl font-medium mb-4 text-slate-900">আমি কিছু করি (সাধারণত)</p>
+                 <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                    <li><span class="font-semibold text-slate-800">I eat rice every day.</span> - আমি প্রতিদিন ভাত খাই</li>
+                    <li><span class="font-semibold text-slate-800">I sleep at 11 pm.</span> - আমি রাত ১১টায় ঘুমাই</li>
+                    <li><span class="font-semibold text-slate-800">I play football sometimes.</span> - আমি মাঝে মাঝে ফুটবল খেলি</li>
+                    <li><span class="font-semibold text-slate-800">I go to school every day.</span> - আমি প্রতিদিন স্কুলে যাই</li>
+                </ul>
+                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">I wake up in the morning. I eat breakfast. I brush my teeth. I wear my uniform. I go to school. I study. I read books. I run on the field. I play football with my friends.</p>
+                </div>
+                <div class="mt-6 p-4 bg-green-50 rounded-xl border border-green-200/80">
+                    <p class="font-semibold text-lg text-green-800">Common Adverbs:</p>
+                    <p class="mt-2 text-green-700">usually (সাধারণত), every day (প্রতিদিন), sometimes (মাঝে মাঝে), rarely (কদাচিৎ)</p>
+                </div>
+            `},
+             { id: 'topic-5', title: 'I am [verb+ing]', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I am [verb+ing]</h3>
+                <p class="mb-5 text-slate-500">Talking about actions happening now.</p>
+                <p class="text-xl font-medium mb-4 text-slate-900">আমি এখন কিছু করছি</p>
+                 <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                    <li><span class="font-semibold text-slate-800">I am eating.</span> - আমি খাচ্ছি</li>
+                    <li><span class="font-semibold text-slate-800">I am working now.</span> - আমি এখন কাজ করছি</li>
+                    <li><span class="font-semibold text-slate-800">I am going to school.</span> - আমি স্কুলে যাচ্ছি</li>
+                    <li><span class="font-semibold text-slate-800">I am playing football.</span> - আমি ফুটবল খেলছি</li>
+                </ul>
+                <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">I am sitting on a chair. I am talking to Rashed. I am studying English. I am doing my homework. I am feeling happy. I am writing a story.</p>
+                </div>
+            `},
+             { id: 'topic-6', title: 'I [verb] (past form)', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I [verb] (past form)</h3>
+                <p class="mb-5 text-slate-500">Talking about actions completed in the past.</p>
+                <p class="text-xl font-medium mb-4 text-slate-900">আমি কিছু করেছি (অতীতে)</p>
+                 <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                    <li><span class="font-semibold text-slate-800">I ate rice yesterday.</span> - আমি গতকাল ভাত খেয়েছিলাম</li>
+                    <li><span class="font-semibold text-slate-800">I slept at 11 pm.</span> - আমি রাত ১১টায় ঘুমিয়েছিলাম</li>
+                    <li><span class="font-semibold text-slate-800">I played football.</span> - আমি ফুটবল খেলেছিলাম</li>
+                    <li><span class="font-semibold text-slate-800">I went to school today.</span> - আমি আজ স্কুলে গিয়েছিলাম</li>
+                </ul>
+                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">Today, I woke up at 8am. I went to school. I brushed my teeth. I wore my uniform. I ate rice and chicken. I studied English. I read a book. I played football with my friends.</p>
+                </div>
+                <div class="mt-6 p-4 bg-yellow-50 rounded-xl border border-yellow-200/80">
+                    <p class="font-semibold text-lg text-yellow-800">Verb Forms (V1 -> V2):</p>
+                    <p class="mt-2 text-yellow-700">Eat -> Ate, Sleep -> Slept, Play -> Played, Go -> Went, Wake up -> Woke up</p>
+                </div>
+            `},
+            { id: 'topic-7', title: 'I will [verb]', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I will [verb]</h3>
+                <p class="mb-5 text-slate-500">Talking about future actions.</p>
+                <p class="text-xl font-medium mb-4 text-slate-900">আমি কিছু করবো (ভবিষ্যতে)</p>
+                 <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                    <li><span class="font-semibold text-slate-800">I will go to school tomorrow.</span> - আমি আগামীকাল স্কুলে যাব</li>
+                    <li><span class="font-semibold text-slate-800">I will play football today.</span> - আমি আজ ফুটবল খেলব</li>
+                    <li><span class="font-semibold text-slate-800">I will learn English.</span> - আমি ইংরেজি শিখব</li>
+                    <li><span class="font-semibold text-slate-800">I will do my homework at night.</span> - আমি রাতে আমার বাড়ির কাজ করব</li>
+                </ul>
+                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">I will go out today. I will go to the Bazar. I will buy vegetables. I will come home at 7 pm. I will cook dinner.</p>
+                </div>
+            `},
+            { id: 'topic-8', title: 'I want to [verb]', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I want to [verb]</h3>
+                <p class="mb-5 text-slate-500">Expressing a desire to do something.</p>
+                <p class="text-xl font-medium mb-4 text-slate-900">আমি _____ করতে চাই</p>
+                 <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                    <li><span class="font-semibold text-slate-800">I want to sleep.</span> - আমি ঘুমাতে চাই</li>
+                    <li><span class="font-semibold text-slate-800">I want to study.</span> - আমি পড়তে চাই</li>
+                    <li><span class="font-semibold text-slate-800">I want to eat pizza.</span> - আমি পিজা খেতে চাই</li>
+                    <li><span class="font-semibold text-slate-800">I want to play football.</span> - আমি ফুটবল খেলতে চাই</li>
+                </ul>
+                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">I want to go to school. I want to study English. I want to pass the exam. I want to eat my tiffin. I want to finish my homework. I want to play football with my friends.</p>
+                </div>
+            `},
+             { id: 'topic-9', title: 'I need / I need to', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I need / I need to</h3>
+                <p class="mb-5 text-slate-500">Expressing necessity. This is stronger than 'want'.</p>
+                 <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <p class="text-xl font-medium text-slate-900">I need + (noun) <br/> (আমার ___ দরকার)</p>
+                        <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                            <li><span class="font-semibold text-slate-800">I need a pen.</span> - আমার একটি কলম দরকার</li>
+                            <li><span class="font-semibold text-slate-800">I need a house.</span> - আমার একটি বাড়ি দরকার</li>
+                            <li><span class="font-semibold text-slate-800">I need success.</span> - আমার সাফল্য দরকার</li>
+                        </ul>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-xl font-medium text-slate-900">I need to + (verb) <br/> (আমার ___ করা দরকার)</p>
+                         <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                            <li><span class="font-semibold text-slate-800">I need to study.</span> - আমার পড়াশোনা করা দরকার</li>
+                            <li><span class="font-semibold text-slate-800">I need to eat rice.</span> - আমার ভাত খাওয়া দরকার</li>
+                            <li><span class="font-semibold text-slate-800">I need to sleep early.</span> - আমার তাড়াতাড়ি ঘুমানো দরকার</li>
+                        </ul>
+                    </div>
+                </div>
+                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">I am hungry. I need food. I need a burger. I need a car. I need a house. I need happiness. I need friends.</p>
+                </div>
+            `},
+            { id: 'topic-10', title: 'I have / I have to', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I have / I have to</h3>
+                <p class="mb-5 text-slate-500">Expressing possession or obligation.</p>
+                 <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <p class="text-xl font-medium text-slate-900">I have + (noun) <br/> (আমার আছে)</p>
+                        <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                            <li><span class="font-semibold text-slate-800">I have a pen.</span> - আমার একটি কলম আছে</li>
+                            <li><span class="font-semibold text-slate-800">I have a house.</span> - আমার একটি বাড়ি আছে</li>
+                            <li><span class="font-semibold text-slate-800">I have a fever.</span> - আমার জ্বর আছে</li>
+                        </ul>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-xl font-medium text-slate-900">I have to + (verb) <br/> (আমাকে ___ করতে হবে)</p>
+                         <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                            <li><span class="font-semibold text-slate-800">I have to study.</span> - আমাকে পড়াশোনা করতে হবে</li>
+                            <li><span class="font-semibold text-slate-800">I have to go home.</span> - আমাকে বাড়ি যেতে হবে</li>
+                            <li><span class="font-semibold text-slate-800">I have to wake up early.</span> - আমাকে তাড়াতাড়ি ঘুম থেকে উঠতে হবে</li>
+                        </ul>
+                    </div>
+                </div>
+                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">I am Samiha. I have to go to my office. I have to work all day. I have to call my boss. I have to write a letter. I have to do a meeting. I have to give a presentation.</p>
+                </div>
+            `},
+             { id: 'topic-11', title: 'This is / That is / It is', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">This is / That is / It is</h3>
+                <p class="mb-5 text-slate-500">Identifying objects and making general statements.</p>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200/80">
+                        <p class="text-xl font-medium text-slate-900">This is (এইটা)</p>
+                        <p class="text-slate-600"><span class="font-semibold text-slate-800">This is a cat.</span></p>
+                        <p class="text-slate-600"><span class="font-semibold text-slate-800">This is my house.</span></p>
+                    </div>
+                     <div class="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200/80">
+                        <p class="text-xl font-medium text-slate-900">That is (ওইটা)</p>
+                        <p class="text-slate-600"><span class="font-semibold text-slate-800">That is a tiger.</span></p>
+                        <p class="text-slate-600"><span class="font-semibold text-slate-800">That is our car.</span></p>
+                    </div>
+                     <div class="space-y-2 bg-slate-100 p-4 rounded-xl border border-slate-200/80">
+                        <p class="text-xl font-medium text-slate-900">It is (এটা / সাধারণ)</p>
+                        <p class="text-slate-600"><span class="font-semibold text-slate-800">It is hot today.</span></p>
+                        <p class="text-slate-600"><span class="font-semibold text-slate-800">It is raining.</span></p>
+                    </div>
+                </div>
+                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">I am Sadman. I am at a zoo. This is an elephant. That is a tiger. That is a bird. This is a snake. That is a lion. That is a zebra. This is a horse. That is a giraffe.</p>
+                </div>
+            `},
+             { id: 'topic-12', title: 'There is', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">There is</h3>
+                <p class="mb-5 text-slate-500">Indicating the existence of something.</p>
+                <p class="text-xl font-medium mb-4 text-slate-900">সাধারণ অর্থে কিছু আছে</p>
+                 <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                    <li><span class="font-semibold text-slate-800">There is a tall boy in our class.</span> - আমাদের ক্লাসে একটি লম্বা ছেলে আছে।</li>
+                    <li><span class="font-semibold text-slate-800">There is an apple on the table.</span> - টেবিলের উপর একটি আপেল আছে।</li>
+                    <li><span class="font-semibold text-slate-800">There is a problem.</span> - একটি সমস্যা আছে।</li>
+                </ul>
+                <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">There is a tall boy in our class. There is an exam tomorrow. There is a cat on our table. There is a problem at our school. So, it is closed tomorrow.</p>
+                </div>
+            `},
+            { id: 'topic-13', title: 'I can / cannot', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I can / cannot</h3>
+                <p class="mb-5 text-slate-500">Expressing ability or inability.</p>
+                 <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <p class="text-xl font-medium text-slate-900">I can (আমি কিছু করতে পারি)</p>
+                        <ul class="list-disc list-inside bg-green-50 text-green-700 p-4 rounded-xl border border-green-200/80 space-y-2">
+                            <li><span class="font-semibold text-green-900">I can sing.</span> - আমি গান গাইতে পারি</li>
+                            <li><span class="font-semibold text-green-900">I can cook.</span> - আমি রান্না করতে পারি</li>
+                            <li><span class="font-semibold text-green-900">I can speak English.</span> - আমি ইংরেজিতে কথা বলতে পারি</li>
+                        </ul>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-xl font-medium text-slate-900">I cannot (আমি কিছু করতে পারি না)</p>
+                         <ul class="list-disc list-inside bg-red-50 text-red-700 p-4 rounded-xl border border-red-200/80 space-y-2">
+                            <li><span class="font-semibold text-red-900">I cannot sing.</span> - আমি গান গাইতে পারি না</li>
+                            <li><span class="font-semibold text-red-900">I cannot drive a car.</span> - আমি গাড়ি চালাতে পারি না</li>
+                            <li><span class="font-semibold text-red-900">I cannot climb a tree.</span> - আমি গাছে চড়তে পারি না</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Example Paragraph:</p>
+                    <p class="mt-2 text-indigo-700">I am Raihan. I can swim. I can run. I can jump. I can sing. I can play guitar. I cannot drive a car. I cannot ride a bike. I cannot climb a tree.</p>
+                </div>
+            `},
+             { id: 'topic-14', title: 'I should / could / would', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">I should / could / would</h3>
+                <p class="mb-5 text-slate-500">Expressing advice, possibility, and conditional statements.</p>
+                <div class="space-y-6">
+                    <div class="bg-slate-100 p-4 rounded-xl border border-slate-200/80">
+                        <p class="text-xl font-medium text-slate-900">I should (আমার কিছু করা উচিত)</p>
+                        <p class="mt-2 text-slate-600"><span class="font-semibold text-slate-800">I should study.</span> - আমার পড়াশোনা করা উচিত।</p>
+                        <p class="mt-1 text-slate-600"><span class="font-semibold text-slate-800">Example:</span> I should clean my room. I should get a haircut. I should go to the gym. I should eat healthy foods.</p>
+                    </div>
+                    <div class="bg-slate-100 p-4 rounded-xl border border-slate-200/80">
+                        <p class="text-xl font-medium text-slate-900">I could (আমি কিছু করতে পারতাম)</p>
+                        <p class="mt-2 text-slate-600"><span class="font-semibold text-slate-800">I could pass the exam.</span> - আমি পরীক্ষায় পাস করতে পারতাম।</p>
+                        <p class="mt-1 text-slate-600"><span class="font-semibold text-slate-800">Example:</span> I could buy the phone if I had money. I could play football.</p>
+                    </div>
+                     <div class="bg-slate-100 p-4 rounded-xl border border-slate-200/80">
+                        <p class="text-xl font-medium text-slate-900">I would (আমি কিছু করতাম যদি...)</p>
+                        <p class="mt-2 text-slate-600"><span class="font-semibold text-slate-800">I would play football but I am tired.</span> - আমি ফুটবল খেলতাম কিন্তু আমি ক্লান্ত।</p>
+                        <p class="mt-1 text-slate-600"><span class="font-semibold text-slate-800">Example:</span> I would pass the exam if I studied. I would go to school if I was healthy.</p>
+                    </div>
+                </div>
+            `},
+             { id: 'topic-15', title: 'Using "be"', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">Using "be" (হওয়া)</h3>
+                <p class="mb-5 text-slate-500">Using 'be' with other structures to talk about becoming something.</p>
+                 <ul class="list-disc list-inside bg-slate-100 p-4 rounded-xl border border-slate-200/80 space-y-2">
+                    <li>I will <span class="font-semibold text-slate-800">be</span> _______ - আমি কিছু হবো</li>
+                    <li>I want to <span class="font-semibold text-slate-800">be</span> _______ - আমি কিছু হতে চাই</li>
+                    <li>I need to <span class="font-semibold text-slate-800">be</span> _______ - আমার কিছু হতে হবে</li>
+                    <li>I have to <span class="font-semibold text-slate-800">be</span> _______ - আমাকে কিছু হতে হবে</li>
+                    <li>I can <span class="font-semibold text-slate-800">be</span> _______ - আমি কিছু হতে পারি</li>
+                    <li>I should <span class="font-semibold text-slate-800">be</span> _______ - আমার কিছু হওয়া উচিত</li>
+                </ul>
+                 <div class="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-200/80">
+                    <p class="font-semibold text-lg text-indigo-800">Examples:</p>
+                    <p class="mt-2 text-indigo-700"><span class="font-semibold">I will be a doctor.</span></p>
+                    <p class="text-indigo-700"><span class="font-semibold">I want to be successful.</span></p>
+                     <p class="text-indigo-700"><span class="font-semibold">I should be happy.</span></p>
+                </div>
+            `},
+            { id: 'topic-16', title: 'Practice Stories', content: `
+                <h3 class="text-2xl font-semibold mb-4 text-slate-800">Practice Stories</h3>
+                <p class="mb-5 text-slate-500">Read these stories to see all the structures in action.</p>
+                <div class="space-y-8">
+                    <div class="bg-slate-100 p-5 rounded-xl border border-slate-200/80">
+                        <p class="text-xl font-medium text-slate-900 mb-2">Samia's Story</p>
+                        <p class="text-slate-700">Hi, I am Samia. I am a housewife. I have a beautiful family. I am going to the supermarket. I have to buy groceries. Then I need to come home. Then I will cook for my family. I have a daughter and a son. It is hot today. There is a super market beside my house. I will go there. I have 2000 taka in my bag. I will use it to buy groceries. I want to buy chicken, rice, vegetables and sugar. I should go home soon. Then, I should cook lunch for my family. I want to be a good mother.</p>
+                    </div>
+                     <div class="bg-slate-100 p-5 rounded-xl border border-slate-200/80">
+                        <p class="text-xl font-medium text-slate-900 mb-2">Anisha's Story</p>
+                        <p class="text-slate-700">Hi, I am Anisha. I am a medical student. I want to be a doctor. I am studying Medicine now at ABC university. I will complete my degree next year. Then, I will get a job at a hospital. I should study more. I need to get a good CGPA. I was sick yesterday. I am fine today. I woke up at 8 am today. Then I went to my university. I would go abroad to study if I had money.</p>
+                    </div>
+                     <div class="bg-slate-100 p-5 rounded-xl border border-slate-200/80">
+                        <p class="text-xl font-medium text-slate-900 mb-2">Rubel's Story</p>
+                        <p class="text-slate-700">I am Rubel. I am a student. I am playing football with my friends. I went to school today. I will go to my home at 5pm. I want to win this football match. There is a field beside my home. I play football there.</p>
+                    </div>
+                </div>
+            `}
+        ];
+
+        const previewView = document.getElementById('preview-view');
+        const lessonView = document.getElementById('lesson-view');
+        const topicListContainer = document.getElementById('topic-list');
+        const lessonContentDisplay = document.getElementById('lesson-content-display');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const backToTopicsBtn = document.getElementById('back-to-topics-btn');
+
+        function renderPreviewPage() {
+            previewView.style.display = 'block';
+            lessonView.style.display = 'none';
+            previewView.classList.add('view-enter');
+            currentLessonIndex = -1;
+            topicListContainer.innerHTML = '';
+            
+            lessons.forEach((lesson, index) => {
+                const topicCard = document.createElement('div');
+                topicCard.className = 'bg-white p-6 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer flex items-center space-x-4';
+                topicCard.innerHTML = `
+                    <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                        ${index + 1}
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="text-lg font-semibold text-slate-800">${lesson.title}</h4>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                `;
+                topicCard.onclick = () => showLesson(index);
+                topicListContainer.appendChild(topicCard);
+            });
+        }
+
+        function showLesson(index) {
+            if (index < 0 || index >= lessons.length) {
+                return;
+            }
+            currentLessonIndex = index;
+
+            previewView.style.display = 'none';
+            lessonView.style.display = 'block';
+            lessonView.classList.add('view-enter');
+            
+            const lesson = lessons[index];
+            lessonContentDisplay.innerHTML = `
+                <div class="lesson-card relative bg-white/70 backdrop-blur-md border border-slate-200/80 p-6 md:p-8 rounded-2xl shadow-lg">
+                    <div class="absolute -top-5 -left-5 bg-gradient-to-br from-indigo-500 to-purple-600 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl shadow-lg">${index + 1}</div>
+                    <div class="prose max-w-none prose-lg">${lesson.content}</div>
+                </div>
+            `;
+            
+            // Update button states
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === lessons.length - 1;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Event Listeners
+        prevBtn.onclick = () => showLesson(currentLessonIndex - 1);
+        nextBtn.onclick = () => showLesson(currentLessonIndex + 1);
+        backToTopicsBtn.onclick = renderPreviewPage;
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', renderPreviewPage);
+    </script>
+</body>
+</html>
