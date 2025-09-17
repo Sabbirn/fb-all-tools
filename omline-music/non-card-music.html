@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+
+<title>StyloPlayer | Full Screen</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* Use Poppins font and prevent pull-to-refresh/overscroll effects */
+html, body {
+  font-family: 'Poppins', sans-serif;
+  overscroll-behavior-y: contain;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Glowing circular border for album art */
+.cover-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 6px; /* border thickness */
+  background: linear-gradient(45deg, #8A2BE2, #FF69B4);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Custom range input styles with fill */
+.range-bar {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.range-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+</style>
+</head>
+<body class="bg-gradient-to-br from-[#1d2b64] to-[#0f0c29] text-white">
+
+<div class="w-screen h-dvh bg-black/20 backdrop-blur-xl flex flex-col overflow-hidden p-6 pt-16 sm:p-8">
+
+  <header class="flex-shrink-0 text-center">
+    <marquee><h2 id="song-title" class="text-xl font-bold truncate">Loading Player...</h2></marquee>
+  </header>
+
+  <main class="flex-grow flex flex-col items-center justify-evenly my-4">
+
+    <div class="relative w-[70vw] max-w-xs aspect-square flex items-center justify-center cover-wrapper">
+      <img id="cover" src="https://placehold.co/256x256/1e1b34/ffffff?text=...&font=poppins" alt="Album Cover" class="w-[calc(100%-24px)] h-[calc(100%-24px)] rounded-full object-cover shadow-lg">
+    </div>
+
+    <div class="w-full">
+      <input id="progress-bar" type="range" class="range-bar" value="0" step="1" min="0">
+      <div class="flex justify-between text-xs text-white/70 mt-2">
+        <span id="current-time">0:00</span>
+        <span id="duration">0:00</span>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between w-full">
+      <button id="shuffle" class="text-xl text-white/70 hover:text-white transition-colors"><i class="fas fa-random fa-fw"></i></button>
+      <button id="prev" class="text-3xl text-white hover:text-white/80 transition-transform hover:scale-110"><i class="fas fa-backward-step fa-fw"></i></button>
+      <button id="play-pause" class="w-20 h-20 rounded-full bg-gradient-to-br from-[#8A2BE2] to-[#FF69B4] text-white text-3xl flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+        <i id="play-icon" class="fas fa-play fa-fw"></i>
+      </button>
+      <button id="next" class="text-3xl text-white hover:text-white/80 transition-transform hover:scale-110"><i class="fas fa-forward-step fa-fw"></i></button>
+      <button id="repeat" class="text-xl text-white/70 hover:text-white transition-colors"><i class="fas fa-repeat fa-fw"></i></button>
+    </div>
+
+    <div class="flex items-center w-full space-x-3">
+        <i id="volume-icon" class="fas fa-volume-high text-white/70 hover:text-white cursor-pointer w-6 text-center"></i>
+        <input id="volume-bar" type="range" min="0" max="100" value="50" class="range-bar">
+    </div>
+  </main>
+</div>
+
+<div id="youtube-player" class="hidden"></div>
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+// Main Configuration & State
+const songs = [
+  { url: "https://youtu.be/FkufgMNZcvE" }, { url: "https://youtu.be/caM6OOrffxM" },
+  { url: "https://youtu.be/90ckMfhoi3A" }, { url: "https://youtu.be/1HNGjlUcOSY" },
+  { url: "https://youtu.be/jEkvQB66gOQ" }, { url: "https://youtu.be/4AVDPYZ4E1A" },
+  { url: "https://youtu.be/k0b1oDRFL2A" }, { url: "https://youtu.be/x8EqzrzkeFI" },
+  { url: "https://youtu.be/FrZbWmRzFJs" }, { url: "https://youtu.be/X3CQ8mYpNTM" },
+  { url: "https://youtu.be/EFUSvjts3HQ" }, { url: "https://youtu.be/PL8RxcvwpQw" },
+  { url: "https://youtu.be/1L53FJ7gyng" }, { url: "https://youtu.be/B4x4yw5yKU8" },
+  { url: "https://youtu.be/PjCLH6Pa_q8" }, { url: "https://youtu.be/W8iu1tSTEa8" },
+  { url: "https://youtu.be/7fOfabiBn4Y" }, { url: "https://youtu.be/9ZCMDiBU4I8" },
+  { url: "https://youtu.be/ALKV8JJSUlY" }, { url: "https://youtu.be/uL7udZZdgeA" }
+];
+
+let songIndex = 0;
+let player;
+let progressInterval = null;
+let isRepeat = false;
+let isShuffle = false;
+
+// DOM Elements
+const titleEl = document.getElementById("song-title");
+const coverEl = document.getElementById("cover");
+const playPauseBtn = document.getElementById("play-pause");
+const playIcon = document.getElementById("play-icon");
+const nextBtn = document.getElementById("next");
+const prevBtn = document.getElementById("prev");
+const shuffleBtn = document.getElementById("shuffle");
+const repeatBtn = document.getElementById("repeat");
+const progressBar = document.getElementById("progress-bar");
+const currentTimeEl = document.getElementById("current-time");
+const durationEl = document.getElementById("duration");
+const volumeIcon = document.getElementById("volume-icon");
+const volumeBar = document.getElementById("volume-bar");
+
+/**
+ * ------------------------------------------------
+ * YOUTUBE I-FRAME API BOOTSTRAP
+ * ------------------------------------------------
+ */
+function onYouTubeIframeAPIReady() {
+  const firstVideoId = getVideoId(songs[songIndex].url);
+  player = new YT.Player('youtube-player', {
+    height: '0',
+    width: '0',
+    videoId: firstVideoId,
+    playerVars: { 'playsinline': 1, 'controls': 0, 'disablekb': 1 },
+    events: {
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
+    }
+  });
+}
+
+/**
+ * ------------------------------------------------
+ * PLAYER EVENT HANDLERS
+ * ------------------------------------------------
+ */
+function onPlayerReady(event) {
+  player.setVolume(volumeBar.value);
+  updateRangeFill(volumeBar);
+  updateSongUI(getVideoId(songs[songIndex].url));
+}
+
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.PLAYING) {
+    playIcon.className = "fas fa-pause fa-fw";
+    updateSongUI(player.getVideoData().video_id);
+    startProgress();
+  } else if (event.data === YT.PlayerState.PAUSED) {
+    playIcon.className = "fas fa-play fa-fw";
+    clearInterval(progressInterval);
+  } else if (event.data === YT.PlayerState.ENDED) {
+    if (isRepeat) {
+      player.playVideo();
+    } else {
+      nextSong();
+    }
+  }
+}
+
+/**
+ * ------------------------------------------------
+ * UI & SONG MANAGEMENT
+ * ------------------------------------------------
+ */
+function loadSong(index) {
+  const videoId = getVideoId(songs[index].url);
+  if (videoId) {
+    player.loadVideoById(videoId);
+    updateSongUI(videoId);
+  }
+}
+
+function updateSongUI(videoId) {
+  if (!videoId) return;
+  const songData = player.getVideoData();
+  titleEl.textContent = songData.title || "Loading title...";
+  coverEl.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
+function nextSong() {
+  if (isShuffle) {
+    songIndex = Math.floor(Math.random() * songs.length);
+  } else {
+    songIndex = (songIndex + 1) % songs.length;
+  }
+  loadSong(songIndex);
+}
+
+function prevSong() {
+  songIndex = (songIndex - 1 + songs.length) % songs.length;
+  loadSong(songIndex);
+}
+
+/**
+ * ------------------------------------------------
+ * PROGRESS & TIME HELPERS
+ * ------------------------------------------------
+ */
+function startProgress() {
+  clearInterval(progressInterval);
+  const duration = player.getDuration();
+  if (duration > 0) {
+    progressBar.max = duration;
+    durationEl.textContent = formatTime(duration);
+  }
+
+  progressInterval = setInterval(() => {
+    const currentTime = player.getCurrentTime();
+    progressBar.value = currentTime;
+    updateRangeFill(progressBar);
+    currentTimeEl.textContent = formatTime(currentTime);
+  }, 500);
+}
+
+function updateRangeFill(element) {
+  const percentage = ((element.value - element.min) / (element.max - element.min)) * 100;
+  element.style.background = `linear-gradient(to right, #fff ${percentage}%, rgba(255, 255, 255, 0.2) ${percentage}%)`;
+}
+
+function formatTime(seconds) {
+  if (isNaN(seconds)) return "0:00";
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function getVideoId(url) {
+  const regExp = /(?:youtube\.com\/.*v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
+}
+
+/**
+ * ------------------------------------------------
+ * EVENT LISTENERS
+ * ------------------------------------------------
+ */
+playPauseBtn.addEventListener("click", () => {
+  const playerState = player.getPlayerState();
+  if (playerState === YT.PlayerState.PLAYING) {
+    player.pauseVideo();
+  } else {
+    player.playVideo();
+  }
+});
+
+nextBtn.addEventListener("click", nextSong);
+prevBtn.addEventListener("click", prevSong);
+
+shuffleBtn.addEventListener("click", () => {
+  isShuffle = !isShuffle;
+  shuffleBtn.classList.toggle("text-fuchsia-400", isShuffle);
+  shuffleBtn.classList.toggle("text-white/70", !isShuffle);
+});
+
+repeatBtn.addEventListener("click", () => {
+  isRepeat = !isRepeat;
+  repeatBtn.classList.toggle("text-fuchsia-400", isRepeat);
+  repeatBtn.classList.toggle("text-white/70", !isRepeat);
+});
+
+progressBar.addEventListener("input", () => {
+  clearInterval(progressInterval);
+  player.seekTo(progressBar.value, true);
+  updateRangeFill(progressBar);
+});
+
+progressBar.addEventListener("change", () => {
+    startProgress();
+});
+
+volumeBar.addEventListener("input", (e) => {
+  const volumeValue = e.target.value;
+  player.setVolume(volumeValue);
+  updateRangeFill(e.target);
+  if (player.isMuted()) player.unMute();
+
+  if (volumeValue == 0) {
+    volumeIcon.className = "fas fa-volume-xmark text-white/70 hover:text-white cursor-pointer w-6 text-center";
+  } else if (volumeValue < 50) {
+    volumeIcon.className = "fas fa-volume-low text-white/70 hover:text-white cursor-pointer w-6 text-center";
+  } else {
+    volumeIcon.className = "fas fa-volume-high text-white/70 hover:text-white cursor-pointer w-6 text-center";
+  }
+});
+
+volumeIcon.addEventListener("click", () => {
+  if (player.isMuted()) {
+    player.unMute();
+    if (volumeBar.value > 0) {
+      volumeIcon.className = "fas fa-volume-high text-white/70 hover:text-white cursor-pointer w-6 text-center";
+    } else {
+      volumeIcon.className = "fas fa-volume-xmark text-white/70 hover:text-white cursor-pointer w-6 text-center";
+    }
+  } else {
+    player.mute();
+    volumeIcon.className = "fas fa-volume-xmark text-white/70 hover:text-white cursor-pointer w-6 text-center";
+  }
+});
+</script>
+</body>
+</html>
