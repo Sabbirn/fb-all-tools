@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { background-color: #0d1117; font-family: 'Inter', sans-serif; color: #c9d1d9; }
+        .grid-item { background-color: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+        .coin-header h3 { font-size: 1.1rem; font-weight: 600; color: #f0f6fc; }
+        .coin-header span { color: #8b949e; font-size: 0.875rem; }
+        .price { font-size: 1.75rem; font-weight: 700; color: #f0f6fc; letter-spacing: -0.025em; transition: background-color 0.3s; border-radius: 4px; }
+        .change-positive { color: #3fb950; font-weight: 600; }
+        .change-negative { color: #f85149; font-weight: 600; }
+        .volume { font-size: 0.8rem; color: #8b949e; }
+        .sparkline-chart { width: 100%; height: 50px; margin-top: 1rem; }
+        .search-input { background-color: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 0.75rem 1rem; border-radius: 6px; width: 100%; }
+        .search-input:focus { outline: none; border-color: #3fb950; }
+        .load-more-btn { background-color: #238636; color: #f0f6fc; font-weight: 600; padding: 12px 24px; border-radius: 6px; border: none; cursor: pointer; transition: background-color 0.2s; }
+        .load-more-btn:hover { background-color: #2ea043; }
+        .load-more-btn:disabled { background-color: #525c67; cursor: not-allowed; }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="mb-8 flex justify-center">
+        <input type="text" id="searchInput" placeholder="Search any cryptocurrency..." class="search-input max-w-xl">
+    </div>
+
+    <div id="cryptoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    </div>
+
+    <div id="statusContainer" class="text-center mt-8">
+        <p class="text-gray-500" id="statusMessage">Fetching live cryptocurrency data...</p>
+        <button id="loadMoreBtn" class="load-more-btn hidden">Load More</button>
+    </div>
+
+    <script>
+        const cryptoGrid = document.getElementById('cryptoGrid');
+        const searchInput = document.getElementById('searchInput');
+        const statusMessage = document.getElementById('statusMessage');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+        let currentPage = 1;
+        let allCoinsData = []; // Stores the browsed coin list
+        let debounceTimer;
+        let priceUpdateInterval = null; // To hold the setInterval ID
+
+        // **NEW FUNCTION to automatically update prices of visible coins**
+        async function updatePrices() {
+            const cards = document.querySelectorAll('.grid-item[data-coin-id]');
+            if (cards.length === 0) {
+                if (priceUpdateInterval) clearInterval(priceUpdateInterval);
+                return;
+            }
+
+            const coinIds = Array.from(cards).map(card => card.dataset.coinId).join(',');
+
+            try {
+                const res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinIds}&price_change_percentage=24h`);
+                const updatedCoins = await res.json();
+                
+                if (!Array.isArray(updatedCoins)) return;
+
+                updatedCoins.forEach(coin => {
+                    const card = document.querySelector(`.grid-item[data-coin-id="${coin.id}"]`);
+                    if (!card) return;
+
+                    const priceEl = card.querySelector('.price');
+                    const changeEl = card.querySelector('.price-change');
+                    if (!priceEl || !changeEl) return;
+
+                    const oldPriceText = priceEl.textContent;
+                    const newPriceText = `$${coin.current_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`;
+
+                    if (oldPriceText !== newPriceText) {
+                        priceEl.textContent = newPriceText;
+                        const isPositive = (coin.price_change_percentage_24h || 0) >= 0;
+                        gsap.fromTo(priceEl,
+                            { backgroundColor: isPositive ? 'rgba(63, 185, 80, 0.3)' : 'rgba(248, 81, 73, 0.3)' },
+                            { backgroundColor: 'transparent', duration: 0.7, ease: 'power2.out' }
+                        );
+                    }
+                    
+                    const priceChange = coin.price_change_percentage_24h || 0;
+                    const isPositive = priceChange >= 0;
+                    changeEl.className = `inline-block text-lg price-change ${isPositive ? 'change-positive' : 'change-negative'}`;
+                    changeEl.textContent = `${isPositive ? '+' : ''}${priceChange.toFixed(2)}%`;
+                });
+            } catch (error) {
+                console.error("Failed to update prices:", error);
+            }
+        }
+
+        // **FUNCTION to perform live API search**
+        async function performSearch(query) {
+            cryptoGrid.innerHTML = '';
+            statusMessage.textContent = `Searching for "${query}"...`;
+            statusMessage.classList.remove('hidden');
+            loadMoreBtn.classList.add('hidden');
+
+            try {
+                // Step 1: Use the /search endpoint to find coin IDs
+                const searchRes = await fetch(`https://api.coingecko.com/api/v3/search?query=${query}`);
+                const searchData = await searchRes.json();
+                
+                if (!searchData.coins || searchData.coins.length === 0) {
+                    statusMessage.textContent = `No results found for "${query}".`;
+                    return;
+                }
+
+                // Step 2: Get the IDs from the search results
+                const coinIds = searchData.coins.slice(0, 50).map(coin => coin.id).join(',');
+
+                // Step 3: Use the IDs to get full market data
+                const marketsRes = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coinIds}&sparkline=true&price_change_percentage=24h`);
+                const marketsData = await marketsRes.json();
+
+                statusMessage.classList.add('hidden');
+                displayCryptoCards(marketsData);
+
+            } catch (error) {
+                console.error("Search failed:", error);
+                statusMessage.textContent = "Error during search. Please try again.";
+            }
+        }
+        
+        // **FUNCTION to load coins for browsing**
+        async function loadCryptoData() {
+            statusMessage.textContent = "Fetching more coins...";
+            statusMessage.classList.remove('hidden');
+            loadMoreBtn.disabled = true;
+
+            try {
+                const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=${currentPage}&sparkline=true&price_change_percentage=24h`);
+                const newCoins = await response.json();
+
+                if (newCoins.length === 0) {
+                    statusMessage.textContent = "You've reached the end!";
+                    loadMoreBtn.classList.add('hidden');
+                    return;
+                }
+
+                allCoinsData.push(...newCoins);
+                displayCryptoCards(newCoins, true); // Append new coins
+                currentPage++;
+                
+                statusMessage.classList.add('hidden');
+                loadMoreBtn.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error fetching crypto data:', error);
+                statusMessage.textContent = "Failed to load data. Please try again later.";
+            } finally {
+                loadMoreBtn.disabled = false;
+            }
+        }
+        
+        // **SEARCH Event Listener with Debounce**
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            const searchTerm = searchInput.value.trim();
+
+            if (searchTerm) {
+                debounceTimer = setTimeout(() => {
+                    performSearch(searchTerm);
+                }, 500); // Wait 500ms after user stops typing
+            } else {
+                // If search is cleared, restore the browse view
+                statusMessage.classList.add('hidden');
+                loadMoreBtn.classList.remove('hidden');
+                displayCryptoCards(allCoinsData);
+            }
+        });
+
+        // **FUNCTION to display cards (modified to handle updates)**
+        function displayCryptoCards(coins, shouldAppend = false) {
+            if (!shouldAppend) {
+                cryptoGrid.innerHTML = '';
+            }
+
+            const fragment = document.createDocumentFragment();
+            coins.forEach(coin => {
+                const priceChange = coin.price_change_percentage_24h || 0;
+                const isPositive = priceChange >= 0;
+                const card = document.createElement('div');
+                card.className = 'grid-item opacity-0';
+                card.dataset.coinId = coin.id; // Add coin ID for easy selection later
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-2 coin-header">
+                            <div class="flex items-center">
+                                <img src="${coin.image}" alt="${coin.name} logo" class="w-6 h-6 mr-2">
+                                <h3>${coin.name} (${coin.symbol.toUpperCase()})</h3>
+                            </div>
+                            <span>#${coin.market_cap_rank || 'N/A'}</span>
+                        </div>
+                        <p class="price">$${coin.current_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}</p>
+                        <span class="inline-block text-lg price-change ${isPositive ? 'change-positive' : 'change-negative'}">${isPositive ? '+' : ''}${priceChange.toFixed(2)}%</span>
+                        <p class="volume mt-1">24h Vol: $${coin.total_volume ? coin.total_volume.toLocaleString() : 'N/A'}</p>
+                    </div>
+                    <canvas class="sparkline-chart" data-coin-id="${coin.id}"></canvas>
+                `;
+                fragment.appendChild(card);
+            });
+            cryptoGrid.appendChild(fragment);
+
+            const newCards = cryptoGrid.querySelectorAll('.grid-item.opacity-0');
+            newCards.forEach(card => {
+                const canvas = card.querySelector('canvas');
+                const coinId = canvas.dataset.coinId;
+                const coinData = coins.find(c => c.id === coinId);
+                if (canvas && coinData && coinData.sparkline_in_7d) {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    drawSparkline(canvas, coinData.sparkline_in_7d.price, (coinData.price_change_percentage_24h || 0) >= 0);
+                }
+                // Make sure we remove the opacity class after animation
+                card.classList.remove('opacity-0');
+            });
+
+            gsap.from(newCards, { duration: 0.5, opacity: 0, y: 20, stagger: 0.05, ease: "power2.out" });
+
+            // **MANAGE PRICE UPDATE INTERVAL**
+            if (priceUpdateInterval) clearInterval(priceUpdateInterval);
+            if (cryptoGrid.children.length > 0) {
+                // A 5ms interval is not feasible due to API rate limits. 5000ms is a safe value.
+                priceUpdateInterval = setInterval(updatePrices, 5000);
+            }
+        }
+        
+        function drawSparkline(canvas, prices, isPositive) {
+            const ctx = canvas.getContext('2d');
+            if (!prices || prices.length < 2) return;
+            const minPrice = Math.min(...prices), maxPrice = Math.max(...prices), range = maxPrice - minPrice;
+            const scaleX = canvas.width / (prices.length - 1);
+            const scaleY = (price) => canvas.height - ((price - minPrice) / range) * canvas.height;
+            ctx.beginPath();
+            ctx.moveTo(0, scaleY(prices[0]));
+            for (let i = 1; i < prices.length; i++) ctx.lineTo(i * scaleX, scaleY(prices[i]));
+            ctx.strokeStyle = isPositive ? '#3fb950' : '#f85149';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        
+        loadMoreBtn.addEventListener('click', loadCryptoData);
+        loadCryptoData(); // Initial data load
+
+    </script>
+</body>
+</html>
