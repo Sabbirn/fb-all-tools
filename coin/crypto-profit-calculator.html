@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crypto Futures Profit Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#0f172a;color:#e6eef8;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+    .container{background:#1e293b;padding:30px;border-radius:16px;width:100%;max-width:480px;box-shadow:0 10px 25px rgba(0,0,0,0.5)}
+    h2{margin-bottom:20px;font-weight:700;color:#00f6ff;text-align:center}
+    input,select,button{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:none;font-size:15px}
+    input,select{background:#334155;color:#e6eef8}
+    select{appearance:none}
+    button{background:#00f6ff;color:#0f172a;font-weight:700;cursor:pointer;transition:0.3s}
+    button:hover{background:#06b6d4}
+    .result, .summary{margin-top:20px;padding:15px;background:#1e293b;border-radius:12px;line-height:1.6;box-shadow:0 5px 15px rgba(0,0,0,0.3)}
+    .result p, .summary p{margin:5px 0}
+    @media(max-width:500px){.container{padding:20px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Crypto Futures Profit Calculator</h2>
+    <form id="calcForm">
+      <select id="direction">
+        <option value="long">Long</option>
+        <option value="short">Short</option>
+      </select>
+      <input type="number" step="any" id="leverage" placeholder="Leverage (x)" value="5" required>
+      <input type="number" step="any" id="invest" placeholder="Investment (USD)" value="100" required>
+      <input type="number" step="any" id="entryPrice" placeholder="Entry Price" value="0.0399234" required>
+      <input type="number" step="any" id="exitPrice" placeholder="Exit Price" value="0.0412345" required>
+      <button type="submit">Calculate</button>
+    </form>
+    <div id="output" class="result" style="display:none"></div>
+    <div id="summary" class="summary" style="display:none"></div>
+  </div>
+
+  <script>
+    document.getElementById('calcForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const dir = document.getElementById('direction').value;
+      const lev = parseFloat(document.getElementById('leverage').value) || 1;
+      const inv = parseFloat(document.getElementById('invest').value) || 0;
+      const entry = parseFloat(document.getElementById('entryPrice').value) || 0;
+      const exit = parseFloat(document.getElementById('exitPrice').value) || 0;
+
+      if(entry <= 0 || exit <= 0 || inv <= 0){
+        alert('Enter valid positive numbers.');
+        return;
+      }
+
+      const notional = inv * lev;
+      const posSize = notional / entry;
+      let profit = 0;
+      if(dir === 'long'){
+        profit = (exit - entry) * posSize;
+      } else {
+        profit = (entry - exit) * posSize;
+      }
+      const roi = (profit / inv) * 100;
+
+      const output = document.getElementById('output');
+      output.style.display = 'block';
+      output.innerHTML = `
+        <p><b>Trade Direction:</b> ${dir.toUpperCase()}</p>
+        <p><b>Entry Price:</b> ${entry.toFixed(8)}</p>
+        <p><b>Exit Price:</b> ${exit.toFixed(8)}</p>
+        <p><b>Position Size:</b> ${posSize.toFixed(8)} units</p>
+        <p><b>Gross Profit:</b> $${profit.toFixed(2)}</p>
+        <p><b>ROI:</b> ${roi.toFixed(2)}%</p>
+        <p><b>Notional Value:</b> $${notional.toFixed(2)}</p>
+      `;
+
+      const summary = document.getElementById('summary');
+      summary.style.display = 'block';
+      summary.innerHTML = `
+        <p><b>Investment Amount:</b> $${inv.toFixed(2)}</p>
+        <p><b>Profit Amount:</b> $${profit.toFixed(2)}</p>
+      `;
+    });
+  </script>
+</body>
+</html>
